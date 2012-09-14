@@ -1,4 +1,6 @@
 export PATH=$PATH:/sbin:/usr/sbin
+export EDITOR=vi
+export PAGER=less
 
 alias j=jobs
 alias h=history
