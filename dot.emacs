@@ -150,3 +150,10 @@
 
 (require 'multi-shell)
 (setq multi-shell-command "/bin/bash")
+
+(autoload 'ansi-color-for-comint-mode-on "ansi-color" nil t)
+(add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
+
+;; settings for term-mode
+(require 'multi-term)
+(setq term-unbind-key-list '("C-x" "C-c" "<ESC>"))
