@@ -1,8 +1,10 @@
-export PATH=$PATH:/sbin:/usr/sbin
+# -*- shell-script -*-
+export PATH=$HOME/bin:$PATH:/sbin:/usr/sbin
 
 if [ "$EMACS" != "" ]; then
    export EDITOR=emacsclient
-   export PAGER=emacsclient
+   #export PAGER=emacsclient
+   LANG=C
 else
    export EDITOR=vi
    export PAGER=less
