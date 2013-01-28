@@ -4,6 +4,9 @@
                (setq load-path (cons dir load-path))))
         '("~/.emacs.d/auto-install" "~/.emacs.d"))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; general settings
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (when window-system
   (set-default-font "Inconsolata-10")
   (set-face-font 'variable-pitch "Inconsolata-10")
