@@ -1,5 +1,6 @@
 # -*- shell-script -*-
 export PATH=$HOME/bin:$PATH:/sbin:/usr/sbin
+export PS1='[\u@\h \W]\$ '
 
 if [ "$EMACS" != "" ]; then
    export EDITOR=emacsclient
