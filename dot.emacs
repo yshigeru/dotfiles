@@ -14,6 +14,7 @@
                     'japanese-jisx0208
                     '("VL ゴシック" . "unicode-bmp")
 		    )
+  (setq cursor-in-non-selected-windows nil)
   )
 
 
