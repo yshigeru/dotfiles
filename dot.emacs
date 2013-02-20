@@ -8,15 +8,9 @@
 ;; general settings
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (when window-system
-  (set-default-font "Inconsolata-10")
-  (set-face-font 'variable-pitch "Inconsolata-10")
-  (set-fontset-font (frame-parameter nil 'font)
-                    'japanese-jisx0208
-                    '("VL ゴシック" . "unicode-bmp")
-		    )
+  (set-default-font "Ricty-10")
   (setq cursor-in-non-selected-windows nil)
   )
-
 
 (menu-bar-mode -1)
 (tool-bar-mode -1)
@@ -28,6 +22,12 @@
 (global-font-lock-mode t)
 (column-number-mode t)
 (setq confirm-kill-emacs 'y-or-n-p)
+
+(when (require 'color-theme)
+  (color-theme-initialize)
+  ;; color-theme-solorized.el
+  (when (require 'color-theme-solarized)
+    (color-theme-solarized-dark)))
 
 (require 'server)
 (unless (server-running-p)
@@ -253,6 +253,11 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (require 'mew)
 
+(setq mew-summary-mode-hook
+      '(lambda ()
+	 (local-set-key "\C-h" 'mew-summary-prev-page)
+	 ))
+
 (setq mew-ssl-verify-level 0
       ;; Does not bring mail automatically at booting time
       mew-auto-get nil
@@ -275,7 +280,7 @@
       mew-use-biff-bell t  ; use alarm
       mew-biff-interval 10 ; minute
       mew-biff-function 'my/biff-function
-      mew-summary-form '(type (5 date) " " (25 from) " " t (50 subj))
+      mew-summary-form '(type (5 date) " " (25 from) " " t (45 subj))
       )
 
 (defvar mew/gmail-default-alist
