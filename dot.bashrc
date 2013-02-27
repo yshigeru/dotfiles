@@ -1,12 +1,13 @@
 # -*- shell-script -*-
 export PATH=$HOME/bin:$PATH:/sbin:/usr/sbin
 export PS1='[\u@\h \W]\$ '
+export HISTSIZE=100000
 
-if [ "$TERM" = dumb ]; then
-    export TERM=xterm
-    eval `dircolors $HOME/src/dircolors-solarized-master/dircolors.ansi-universal`
-    export TERM=dumb
-fi
+# if [ "$TERM" = dumb ]; then
+#     export TERM=xterm
+#     eval `dircolors $HOME/src/dircolors-solarized-master/dircolors.ansi-universal`
+#     export TERM=dumb
+# fi
 
 if [ "$EMACS" != "" ]; then
    export EDITOR=emacsclient
