@@ -23,12 +23,6 @@
 (column-number-mode t)
 (setq confirm-kill-emacs 'y-or-n-p)
 
-(when (require 'color-theme)
-  (color-theme-initialize)
-  ;; color-theme-solorized.el
-  (when (require 'color-theme-solarized)
-    (color-theme-solarized-dark)))
-
 (require 'server)
 (unless (server-running-p)
   (server-start))
@@ -207,6 +201,9 @@
 (add-hook 'shell-mode-hook
           '(lambda ()
              (ansi-color-for-comint-mode-on)
+	     (setq comint-input-ring-file-name "~/.bash_history")
+	     (setq comint-input-ring-size 1000000)
+	     (comint-read-input-ring t)
              (pcomplete-shell-setup)
              ))
 
