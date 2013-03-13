@@ -1,13 +1,7 @@
 # -*- shell-script -*-
-export PATH=$HOME/bin:$PATH:/sbin:/usr/sbin
+export PATH=/opt/powerpc-asianux-linux-gnuspe/bin:/opt/powerpc-devel/bin:/opt/armdev/bin:$HOME/bin:$PATH:/sbin:/usr/sbin
 export PS1='[\u@\h \W]\$ '
-export HISTSIZE=100000
-
-# if [ "$TERM" = dumb ]; then
-#     export TERM=xterm
-#     eval `dircolors $HOME/src/dircolors-solarized-master/dircolors.ansi-universal`
-#     export TERM=dumb
-# fi
+export HISTSIZE=1000000
 
 if [ "$EMACS" != "" ]; then
    export EDITOR=emacsclient
@@ -28,3 +22,4 @@ alias egrep='egrep --color=always'
 alias fgrep='fgrep --color=always'
 alias etags=/usr/bin/etags
 alias ec=emacsclient
+
