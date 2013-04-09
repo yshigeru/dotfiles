@@ -4,6 +4,9 @@
                (setq load-path (cons dir load-path))))
         '("~/.emacs.d/auto-install" "~/.emacs.d"))
 
+(setenv "PATH" (concat "/sbin:/usr/sbin:" (getenv "PATH")))
+(setenv "LANG" "C")
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; general settings
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -218,6 +221,21 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (require 'multi-term)
 (setq term-unbind-key-list '("C-x" "C-c" "<ESC>"))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; settings for eshell
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(require 'eshell)
+(eval-after-load "em-alias"
+  '(progn
+     (eshell/alias 'll "ls -l")
+     (eshell/alias 'la "ls -a")
+     ))
+
+
+(setq eshell-cmpl-ignore-case t)	;補完時に大文字小文字を区別しない
+(setq eshell-hist-ignoredups t)		;履歴で重複を無視する
+(setq eshell-ask-to-save-history (quote always)) ;確認なしでヒストリ保存
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; settings for gtags
