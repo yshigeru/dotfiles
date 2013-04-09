@@ -11,7 +11,7 @@
 ;; general settings
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (when window-system
-  (set-default-font "Ricty-10")
+  (set-default-font "Inconsolata-10")
   (setq cursor-in-non-selected-windows nil)
   )
 
