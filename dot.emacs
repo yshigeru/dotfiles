@@ -13,6 +13,8 @@
 (when window-system
   (set-default-font "Inconsolata-10")
   (setq cursor-in-non-selected-windows nil)
+  (color-theme-initialize)
+  (color-theme-dark-laptop)
   )
 
 (menu-bar-mode -1)
@@ -161,7 +163,9 @@
 (viewer-stay-in-setup)
 (when window-system
   (setq viewer-modeline-color-unwritable "tomato"
-        viewer-modeline-color-view "orange")
+        viewer-modeline-color-view "orange"
+	viewer-modeline-color-default "white"
+	)
   (viewer-change-modeline-color-setup))
 
 (defvar pager-keybind
