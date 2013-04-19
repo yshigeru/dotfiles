@@ -277,7 +277,7 @@ Stay in `view-mode' when the file is unwritable."
   (viewer-stay-in-unless-writable-advice view-mode-disable))
 
 ;;;; (@* "Change mode-line color")
-(defvar viewer-modeline-color-default (face-background 'modeline))
+(defvar viewer-modeline-color-default (face-background 'mode-line))
 (defcustom viewer-modeline-color-unwritable "tomato"
   "*Modeline color when file is not writable."
   :type 'string
@@ -292,7 +292,7 @@ Stay in `view-mode' when the file is unwritable."
   (when (eq (selected-window)
             (get-buffer-window (current-buffer)))
     (set-face-background
-     'modeline
+     'mode-line
      (cond ((and buffer-file-name view-mode
                  (not (file-writable-p buffer-file-name)))
             viewer-modeline-color-unwritable)
