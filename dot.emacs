@@ -4,15 +4,27 @@
                (setq load-path (cons dir load-path))))
         '("~/.emacs.d/auto-install" "~/.emacs.d"))
 
-(setenv "PATH" (concat "/sbin:/usr/sbin:" (getenv "PATH")))
+(setenv "PATH" (concat "/sbin:/usr/sbin:"
+		       "/opt/powerpc-devel/bin:"
+		       (getenv "PATH")))
 (setenv "LANG" "C")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; general settings
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (when window-system
-  (set-default-font "Inconsolata-10")
-  (setq cursor-in-non-selected-windows nil)
+  (set-default-font "SourceCodePro-9")
+  (require 'color-theme)
+  (color-theme-initialize)
+  (color-theme-robin-hood)
+
+  (set-face-attribute 'mode-line          nil :box nil)
+  (set-face-attribute 'mode-line-inactive nil :box nil)
+  (set-face-foreground 'mode-line-buffer-id nil)
+  (set-face-background 'mode-line-buffer-id nil)
+
+  (setq initial-frame-alist
+	(append '((width . 120) (height . 64)) initial-frame-alist))
   )
 
 (menu-bar-mode -1)
@@ -21,6 +33,7 @@
 (setq make-backup-files nil)
 (setq auto-save-default nil)
 (show-paren-mode 1)
+;(global-linum-mode)
 (transient-mark-mode t)
 (global-font-lock-mode t)
 (column-number-mode t)
@@ -94,7 +107,8 @@
 (add-hook 'find-file-hook
           '(lambda ()
              (interactive)
-             (view-mode)))
+             (view-mode)
+	     ))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; settings for auto-install
@@ -211,16 +225,46 @@
              ))
 
 (require 'multi-shell)
-(setq multi-shell-command "/bin/bash")
+(require 'shell-completion)
 
+(setq multi-shell-command "/bin/bash")
 (autoload 'ansi-color-for-comint-mode-on "ansi-color" nil t)
 (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
+
+(defun clear-shell ()
+   (interactive)
+   (let ((old-max comint-buffer-maximum-size))
+     (setq comint-buffer-maximum-size 0)
+     (comint-truncate-buffer)
+     (setq comint-buffer-maximum-size old-max)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; settings for term-mode
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (require 'multi-term)
-(setq term-unbind-key-list '("C-x" "C-c" "<ESC>"))
+;(setq term-unbind-key-list '("C-x" "C-c" "<ESC>"))
+
+(defun my-term-line-mode ()
+  (interactive)
+  (setq old-term-color
+	(face-remap-add-relative 'mode-line :background "dark goldenrod"))
+  (term-line-mode))
+
+(defun my-term-char-mode ()
+  (interactive)
+  (face-remap-remove-relative old-term-color)
+  (term-char-mode))
+  
+(add-hook 'term-mode-hook
+	  '(lambda ()
+	     (define-key term-raw-map "\C-c\C-j" 'term-line-mode)
+	     (define-key term-raw-map "\C-h" 'term-send-backspace)
+	     (define-key term-raw-map "\C-y" 'term-paste)
+	     (key-chord-define term-raw-map "jk" 'my-term-line-mode)
+	     (key-chord-define term-mode-map "jk" 'my-term-char-mode)
+	     (set-face-foreground 'term-color-blue "light blue")
+	     (set-face-foreground 'term-color-red "pink")
+	     ))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; settings for eshell
@@ -340,3 +384,16 @@
 (setq mew-config-alist
       (list `("default" ,@mew/gmail-default-alist)
 	    `("miracle" ,@mew/gmail-miracle-alist)))
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(custom-enabled-themes (quote (sanityinc-solarized-dark)))
+ '(custom-safe-themes (quote ("4aee8551b53a43a883cb0b7f3255d6859d766b6c5e14bcb01bed572fcbef4328" default))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
