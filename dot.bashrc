@@ -1,25 +1,32 @@
 # -*- shell-script -*-
-export PATH=/opt/powerpc-asianux-linux-gnuspe/bin:/opt/powerpc-devel/bin:/opt/armdev/bin:$HOME/bin:$PATH:/sbin:/usr/sbin
+export PATH=/opt/linaro/bin:/opt/powerpc-devel/bin:$HOME/bin:$PATH:/sbin:/usr/sbin
+export PATH=/opt/aarch64-toolchain/bin:$PATH
+export PATH=/opt/Foundation_v8pkg:$PATH
+export PATH=/opt/arm-asianux-linux-gnueabi-toolchain/bin:$PATH
+
+export LANG=C
 export PS1='[\u@\h \W]\$ '
 export HISTSIZE=1000000
 
-if [ "$EMACS" != "" ]; then
-   export EDITOR=emacsclient
-   #export PAGER=emacsclient
-   LANG=C
-else
-   export EDITOR=vi
-   export PAGER=less
-fi   
+export EDITOR=vi
+export PAGER=less
 
 alias j=jobs
 alias h=history
 alias ls='ls --color=auto'
 alias ll='ls -lh'
 alias la='ls -a'
-alias grep='grep --color=always'
-alias egrep='egrep --color=always'
-alias fgrep='fgrep --color=always'
+alias grep='grep --color=auto'
+alias egrep='egrep --color=auto'
+alias fgrep='fgrep --color=auto'
 alias etags=/usr/bin/etags
-alias ec=emacsclient
+alias ec='emacsclient -n'
 
+eo()
+{
+    if [ $# -ne 1 ]; then
+	echo "eo filename" >/dev/stderr
+	return 1
+    fi
+    emacsclient -e "(find-file-other-window \"$1\")"
+}
