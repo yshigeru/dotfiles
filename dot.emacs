@@ -129,6 +129,7 @@
 	     (local-set-key "\M-P" 'cscope-prev-symbol)
 	     (local-set-key "\M-N" 'cscope-next-symbol)
 	     (local-set-key "q" 'delete-window)
+	     (local-set-key "\C-t" 'cscope-pop-mark)
 	     ))
 	     
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
