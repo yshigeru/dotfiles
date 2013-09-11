@@ -7,7 +7,7 @@
 (setenv "PATH" (concat "/sbin:/usr/sbin:"
 		       "/opt/powerpc-devel/bin:"
 		       (getenv "PATH")))
-(setenv "LANG" "C")
+;(setenv "LANG" "C")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; general settings
@@ -17,14 +17,14 @@
   (require 'color-theme)
   (color-theme-initialize)
   (color-theme-robin-hood)
-
+  
   (set-face-attribute 'mode-line          nil :box nil)
   (set-face-attribute 'mode-line-inactive nil :box nil)
   (set-face-foreground 'mode-line-buffer-id nil)
   (set-face-background 'mode-line-buffer-id nil)
 
   (setq initial-frame-alist
-	(append '((width . 120) (height . 64)) initial-frame-alist))
+	(append '((width . 120) (height . 60)) initial-frame-alist))
   )
 
 (menu-bar-mode -1)
@@ -33,15 +33,17 @@
 (setq make-backup-files nil)
 (setq auto-save-default nil)
 (show-paren-mode 1)
-;(global-linum-mode)
 (transient-mark-mode t)
 (global-font-lock-mode t)
 (column-number-mode t)
 (setq confirm-kill-emacs 'y-or-n-p)
+(global-linum-mode)
 
 (require 'server)
 (unless (server-running-p)
   (server-start))
+
+(require 'xcscope)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; key bindings
@@ -85,13 +87,12 @@
 ;; hooks
 (add-hook 'c-mode-common-hook
           '(lambda ()
-             ;(c-set-style "k&r")
 	     (c-set-style "linux")
-             ;(setq indent-tabs-mode nil)
-             ;(setq c-basic-offset 4)
+	     ;(setq indent-tabs-mode nil)
+	     ;(setq c-basic-offset 4)
              (auto-complete-mode)
-             (gtags-mode 1)
-             ;(gtags-make-complete-list)
+	     ;(gtags-mode 1)
+	     ;(gtags-make-complete-list)
              ))
 
 (add-hook 'lisp-mode
@@ -110,6 +111,26 @@
              (view-mode)
 	     ))
 
+(add-hook 'cscope-minor-mode-hooks
+	  '(lambda ()
+	     (local-set-key "\M-." 'cscope-find-global-definition)
+	     (local-set-key "\M-r" 'cscope-find-this-symbol)
+	     (local-set-key "\M-g" 'cscope-find-egrep-pattern)
+	     (local-set-key "\C-t" 'cscope-pop-mark)
+	     (local-set-key "\M-P" 'cscope-prev-symbol)
+	     (local-set-key "\M-N" 'cscope-next-symbol)
+	     (local-set-key "\M-s" '(lambda ()
+				      (interactive)
+				      (switch-to-buffer-other-window "*cscope*")))
+	     ))
+
+(add-hook 'cscope-list-entry-hook
+	  '(lambda ()
+	     (local-set-key "\M-P" 'cscope-prev-symbol)
+	     (local-set-key "\M-N" 'cscope-next-symbol)
+	     (local-set-key "q" 'delete-window)
+	     ))
+	     
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; settings for auto-install
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
