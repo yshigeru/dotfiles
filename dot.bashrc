@@ -20,6 +20,7 @@ alias egrep='egrep --color=auto'
 alias fgrep='fgrep --color=auto'
 alias etags=/usr/bin/etags
 alias ec='emacsclient -n'
+alias mkcscope='find . -name "*.[chxsS]" > cscope.files; cscope -b -q -k'
 
 eo()
 {
