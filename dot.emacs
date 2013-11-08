@@ -7,16 +7,18 @@
 (setenv "PATH" (concat "/sbin:/usr/sbin:"
 		       "/opt/powerpc-devel/bin:"
 		       (getenv "PATH")))
-;(setenv "LANG" "C")
+(setenv "LANG" "C")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; general settings
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (when window-system
-  (set-default-font "SourceCodePro-9")
+  (set-default-font "Source Code Pro 9")
   (require 'color-theme)
   (color-theme-initialize)
   (color-theme-robin-hood)
+  ;(color-theme-dark-laptop)
+  ;(color-theme-aalto-light)
   
   (set-face-attribute 'mode-line          nil :box nil)
   (set-face-attribute 'mode-line-inactive nil :box nil)
@@ -37,7 +39,7 @@
 (global-font-lock-mode t)
 (column-number-mode t)
 (setq confirm-kill-emacs 'y-or-n-p)
-(global-linum-mode)
+;(global-linum-mode)
 
 (require 'server)
 (unless (server-running-p)
@@ -269,7 +271,7 @@
 (defun my-term-line-mode ()
   (interactive)
   (setq old-term-color
-	(face-remap-add-relative 'mode-line :background "dark goldenrod"))
+	(face-remap-add-relative 'mode-line :background "orange"))
   (term-line-mode))
 
 (defun my-term-char-mode ()
@@ -285,14 +287,29 @@
 	     (key-chord-define term-raw-map "jk" 'my-term-line-mode)
 	     (key-chord-define term-mode-map "jk" 'my-term-char-mode)
 
-	     (set-face-foreground 'term-color-black "black")
-	     (set-face-foreground 'term-color-red "red1")
-	     (set-face-foreground 'term-color-green "lime green")
-	     (set-face-foreground 'term-color-yellow "yellow2")
-	     (set-face-foreground 'term-color-blue "DeepSkyBlue3")
-	     (set-face-foreground 'term-color-magenta "magenta2")
-	     (set-face-foreground 'term-color-cyan "cyan2")
-	     (set-face-foreground 'term-color-white "white")
+	     ;; (set-face-foreground 'term-color-black "black")
+	     ;; (set-face-foreground 'term-color-red "red1")
+	     ;; (set-face-foreground 'term-color-green "lime green")
+	     ;; (set-face-foreground 'term-color-yellow "yellow2")
+	     ;; (set-face-foreground 'term-color-blue "DeepSkyBlue3")
+	     ;; (set-face-foreground 'term-color-magenta "magenta2")
+	     ;; (set-face-foreground 'term-color-cyan "cyan2")
+	     ;; (set-face-foreground 'term-color-white "white")
+
+	     (setq ansi-term-color-vector
+		   [unspecified "black" "red1" "lime green" "yellow2"
+				"DeepSkyBlue3" "magenta2" "cyan2" "white"])
+
+	     (define-key term-raw-map "\C-r" 'term-send-raw)
+	     (define-key term-raw-map "\C-s" 'term-send-raw)
+	     (define-key term-raw-map "\C-f" 'term-send-raw)
+	     (define-key term-raw-map "\C-b" 'term-send-raw)
+	     (define-key term-raw-map "\C-p" 'term-send-raw)
+	     (define-key term-raw-map "\C-n" 'term-send-raw)
+	     (define-key term-raw-map (kbd "ESC") 'term-send-raw)
+	     (define-key term-raw-map [delete] 'term-send-raw)
+	     (define-key term-raw-map "\C-z"
+	       (lookup-key (current-global-map) "\C-z"))
 	     ))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
