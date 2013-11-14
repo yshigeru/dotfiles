@@ -47,6 +47,9 @@
 
 (require 'xcscope)
 
+(require 'auto-save-buffers)
+(run-with-idle-timer 0.5 t 'auto-save-buffers)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; key bindings
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -287,18 +290,19 @@
 	     (key-chord-define term-raw-map "jk" 'my-term-line-mode)
 	     (key-chord-define term-mode-map "jk" 'my-term-char-mode)
 
-	     ;; (set-face-foreground 'term-color-black "black")
-	     ;; (set-face-foreground 'term-color-red "red1")
-	     ;; (set-face-foreground 'term-color-green "lime green")
-	     ;; (set-face-foreground 'term-color-yellow "yellow2")
-	     ;; (set-face-foreground 'term-color-blue "DeepSkyBlue3")
-	     ;; (set-face-foreground 'term-color-magenta "magenta2")
-	     ;; (set-face-foreground 'term-color-cyan "cyan2")
-	     ;; (set-face-foreground 'term-color-white "white")
-
-	     (setq ansi-term-color-vector
-		   [unspecified "black" "red1" "lime green" "yellow2"
-				"DeepSkyBlue3" "magenta2" "cyan2" "white"])
+	     (if (string-match "GNU Emacs 24" (emacs-version))
+		 (progn
+		   (set-face-foreground 'term-color-black "black")
+		   (set-face-foreground 'term-color-red "red1")
+		   (set-face-foreground 'term-color-green "lime green")
+		   (set-face-foreground 'term-color-yellow "yellow2")
+		   (set-face-foreground 'term-color-blue "DeepSkyBlue3")
+		   (set-face-foreground 'term-color-magenta "magenta2")
+		   (set-face-foreground 'term-color-cyan "cyan2")
+		   (set-face-foreground 'term-color-white "white"))
+	       (setq ansi-term-color-vector
+		     [unspecified "black" "red1" "lime green" "yellow2"
+				  "DeepSkyBlue3" "magenta2" "cyan2" "white"]))
 
 	     (define-key term-raw-map "\C-r" 'term-send-raw)
 	     (define-key term-raw-map "\C-s" 'term-send-raw)
@@ -407,6 +411,25 @@
     ("smtp-server"       . "smtp.gmail.com")
     ("use-smtp-auth"     . t)))
 
+(defvar mew/gmail-lkml-alist
+  `(("proto"             . "%")
+    ("name"              . "Shigeru Yoshida")
+    ("user"              . "shigeru.yoshida")
+    ("imap-user"         . "shigeru.yoshida")
+    ("mail-domain"       . "gmail.com")
+    ("imap-trash-folder" . "%[Gmail]/ゴミ箱")
+    ("imap-spam-folder"  . "%[Gmail]/迷惑メール")
+    ("fcc"               . "%[Gmail]/送信済みメール")
+    ("imap-server"       . "imap.gmail.com")
+    ("imap-auth"         . t)
+    ("imap-ssl"          . t)
+    ("imap-ssl-port"     . "993")
+    ("smtp-auth"         . t)
+    ("smtp-ssl"          . t)
+    ("smtp-ssl-port"     . "465")
+    ("smtp-server"       . "smtp.gmail.com")
+    ("use-smtp-auth"     . t)))
+
 (defvar mew/gmail-miracle-alist
   `(("proto"             . "%")
     ("name"              . "Shigeru Yoshida")
@@ -428,7 +451,8 @@
 
 ;; Switch to account by types "C" and renew summary by types "i"
 (setq mew-config-alist
-      (list `("default" ,@mew/gmail-default-alist)
+      (list `("lkml" ,@mew/gmail-lkml-alist)
+	    `("default" ,@mew/gmail-default-alist)
 	    `("miracle" ,@mew/gmail-miracle-alist)))
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
