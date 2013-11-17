@@ -389,7 +389,8 @@
       mew-use-biff-bell t  ; use alarm
       mew-biff-interval 10 ; minute
       mew-biff-function 'my/biff-function
-      mew-summary-form '(type (5 date) " " (25 from) " " t (45 subj))
+      ;mew-summary-form '(type (5 date) " " (25 from) " " t (45 subj))
+      mew-summary-form '(type (5 date) " " (25 from) " " t (-1 subj))
       )
 
 (defvar mew/gmail-default-alist
@@ -451,8 +452,8 @@
 
 ;; Switch to account by types "C" and renew summary by types "i"
 (setq mew-config-alist
-      (list `("lkml" ,@mew/gmail-lkml-alist)
-	    `("default" ,@mew/gmail-default-alist)
+      (list `("default" ,@mew/gmail-lkml-alist)
+	    `("gmail" ,@mew/gmail-default-alist)
 	    `("miracle" ,@mew/gmail-miracle-alist)))
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
