@@ -20,8 +20,8 @@
   ;(color-theme-dark-laptop)
   ;(color-theme-aalto-light)
   
-  (set-face-attribute 'mode-line          nil :box nil)
-  (set-face-attribute 'mode-line-inactive nil :box nil)
+  ;(set-face-attribute 'mode-line          nil :box nil)
+  ;(set-face-attribute 'mode-line-inactive nil :box nil)
   (set-face-foreground 'mode-line-buffer-id nil)
   (set-face-background 'mode-line-buffer-id nil)
 
@@ -40,6 +40,7 @@
 (column-number-mode t)
 (setq confirm-kill-emacs 'y-or-n-p)
 ;(global-linum-mode)
+(setq cursor-in-non-selected-windows nil)
 
 (require 'server)
 (unless (server-running-p)
@@ -469,6 +470,12 @@
  ;; If there is more than one, they won't work right.
  )
 
+(setq mew-refile-guess-alist
+      '(("To:"
+	 ("linux-kernel@vger.kernel.org" "%LKML"))
+	("Cc:"
+	 ("linux-kernel@vger.kernel.org" "%LKML"))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; sprit window
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -515,3 +522,17 @@
     (set-window-buffer (selected-window) thisbuf)))
 (global-set-key [f2] 'swap-screen)
 (global-set-key [S-f2] 'swap-screen-with-cursor)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; mozc
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(require 'mozc)
+(setq default-input-method "japanese-mozc")
+(key-chord-define mozc-mode-map "aa" "aa")
+(defadvice toggle-input-method (after my-toggle-input-method activate)
+   (key-chord-mode 1))
+;; http://d.hatena.ne.jp/grandVin/20080917/1221653750
+(defadvice toggle-input-method (around toggle-input-method-around activate)
+  (let ((input-method-function-save input-method-function))
+    ad-do-it
+    (setq input-method-function input-method-function-save)))
