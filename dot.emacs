@@ -1,27 +1,15 @@
 ;; -*- emacs-lisp -*-
-(mapcar '(lambda (dir)
-           (if (not (member dir load-path))
-               (setq load-path (cons dir load-path))))
-        '("~/.emacs.d/auto-install" "~/.emacs.d"))
-
-(setenv "PATH" (concat "/sbin:/usr/sbin:"
-		       "/opt/powerpc-devel/bin:"
-		       (getenv "PATH")))
-(setenv "LANG" "C")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; general settings
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (when window-system
-  (set-default-font "Source Code Pro 9")
+  (set-default-font "Ricty:pixelsize=14")
   (require 'color-theme)
   (color-theme-initialize)
   (color-theme-robin-hood)
-  ;(color-theme-dark-laptop)
-  ;(color-theme-aalto-light)
-  
-  ;(set-face-attribute 'mode-line          nil :box nil)
-  ;(set-face-attribute 'mode-line-inactive nil :box nil)
+  (set-face-attribute 'mode-line          nil :box nil)
+  (set-face-attribute 'mode-line-inactive nil :box nil)
   (set-face-foreground 'mode-line-buffer-id nil)
   (set-face-background 'mode-line-buffer-id nil)
 
@@ -45,11 +33,6 @@
 (require 'server)
 (unless (server-running-p)
   (server-start))
-
-(require 'xcscope)
-
-(require 'auto-save-buffers)
-(run-with-idle-timer 0.5 t 'auto-save-buffers)
 
 (setq-default cursor-in-non-selected-windows nil)
 
@@ -99,8 +82,8 @@
 	     ;(setq indent-tabs-mode nil)
 	     ;(setq c-basic-offset 4)
              (auto-complete-mode)
-	     ;(gtags-mode 1)
-	     ;(gtags-make-complete-list)
+	     (gtags-mode 1)
+	     (gtags-make-complete-list)
              ))
 
 (add-hook 'lisp-mode
@@ -119,35 +102,20 @@
              (view-mode)
 	     ))
 
-(add-hook 'cscope-minor-mode-hooks
-	  '(lambda ()
-	     (local-set-key "\M-." 'cscope-find-global-definition)
-	     (local-set-key "\M-r" 'cscope-find-this-symbol)
-	     (local-set-key "\M-g" 'cscope-find-egrep-pattern)
-	     (local-set-key "\C-t" 'cscope-pop-mark)
-	     (local-set-key "\M-P" 'cscope-prev-symbol)
-	     (local-set-key "\M-N" 'cscope-next-symbol)
-	     (local-set-key "\M-s" '(lambda ()
-				      (interactive)
-				      (switch-to-buffer-other-window "*cscope*")))
-	     ))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; settings for cmigemo
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(when (and (executable-find "cmigemo")
+           (require 'migemo nil t))
+  (setq migemo-options '("-q" "--emacs"))
 
-(add-hook 'cscope-list-entry-hook
-	  '(lambda ()
-	     (local-set-key "\M-P" 'cscope-prev-symbol)
-	     (local-set-key "\M-N" 'cscope-next-symbol)
-	     (local-set-key "q" 'delete-window)
-	     (local-set-key "\C-t" 'cscope-pop-mark)
-	     ))
-	     
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; settings for auto-install
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(require 'auto-install)
-(add-to-list 'load-path auto-install-directory)
-;(auto-install-update-emacswiki-package-name t)
-(auto-install-compatibility-setup)
-(setq ediff-window-setup-function 'ediff-setup-windows-plain)
+  (setq migemo-user-dictionary nil)
+  (setq migemo-regex-dictionary nil)
+  (setq migemo-coding-system 'utf-8-unix)
+  (load-library "migemo")
+  (migemo-init)
+  (setq migemo-command "cmigemo")
+  (setq migemo-dictionary "/usr/share/cmigemo/utf-8/migemo-dict"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; settings for auto-complete
@@ -190,24 +158,8 @@
     (select-window (minibuffer-window))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; settings for key-chord
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(require 'key-chord)
-(setq key-chord-two-keys-delay 0.04)
-(key-chord-mode 1)
-(key-chord-define-global "jk" 'view-mode)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; settings for view-mode
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(setq view-read-only t)
-(require 'viewer)
-(viewer-stay-in-setup)
-(when window-system
-  (setq viewer-modeline-color-unwritable "tomato"
-        viewer-modeline-color-view "orange")
-  (viewer-change-modeline-color-setup))
-
 (defvar pager-keybind
   `(("h" . backward-char)
     ("l" . forward-char)
@@ -218,6 +170,7 @@
     (" " . scroll-up)
     ("n" . ,(lambda () (interactive) (scroll-up 1)))
     ("p" . ,(lambda () (interactive) (scroll-down 1)))
+    ("q" . view-mode)
     ))
 
 (defun define-many-keys (keymap key-table &optional includes)
@@ -242,99 +195,6 @@
 (autoload 'run-scheme "cmuscheme" "Run an inferior Scheme process." t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; settings for shell-mode
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(add-hook 'comint-output-filter-functions 'comint-watch-for-password-prompt)
-(add-hook 'shell-mode-hook
-          '(lambda ()
-             (ansi-color-for-comint-mode-on)
-	     (setq comint-input-ring-file-name "~/.bash_history")
-	     (setq comint-input-ring-size 1000000)
-	     (comint-read-input-ring t)
-             (pcomplete-shell-setup)
-             ))
-
-(require 'multi-shell)
-(require 'shell-completion)
-
-(setq multi-shell-command "/bin/bash")
-(autoload 'ansi-color-for-comint-mode-on "ansi-color" nil t)
-(add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
-
-(defun clear-shell ()
-   (interactive)
-   (let ((old-max comint-buffer-maximum-size))
-     (setq comint-buffer-maximum-size 0)
-     (comint-truncate-buffer)
-     (setq comint-buffer-maximum-size old-max)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; settings for term-mode
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(require 'multi-term)
-;(setq term-unbind-key-list '("C-x" "C-c" "<ESC>"))
-
-(defun my-term-line-mode ()
-  (interactive)
-  (setq old-term-color
-	(face-remap-add-relative 'mode-line :background "orange"))
-  (term-line-mode))
-
-(defun my-term-char-mode ()
-  (interactive)
-  (face-remap-remove-relative old-term-color)
-  (term-char-mode))
-  
-(add-hook 'term-mode-hook
-	  '(lambda ()
-	     (define-key term-raw-map "\C-c\C-j" 'term-line-mode)
-	     (define-key term-raw-map "\C-h" 'term-send-backspace)
-	     (define-key term-raw-map "\C-y" 'term-paste)
-	     (key-chord-define term-raw-map "jk" 'my-term-line-mode)
-	     (key-chord-define term-mode-map "jk" 'my-term-char-mode)
-
-	     (if (string-match "GNU Emacs 24" (emacs-version))
-		 (progn
-		   (set-face-foreground 'term-color-black "black")
-		   (set-face-foreground 'term-color-red "red1")
-		   (set-face-foreground 'term-color-green "lime green")
-		   (set-face-foreground 'term-color-yellow "yellow2")
-		   (set-face-foreground 'term-color-blue "DeepSkyBlue3")
-		   (set-face-foreground 'term-color-magenta "magenta2")
-		   (set-face-foreground 'term-color-cyan "cyan2")
-		   (set-face-foreground 'term-color-white "white"))
-	       (setq ansi-term-color-vector
-		     [unspecified "black" "red1" "lime green" "yellow2"
-				  "DeepSkyBlue3" "magenta2" "cyan2" "white"]))
-
-	     (define-key term-raw-map "\C-r" 'term-send-raw)
-	     (define-key term-raw-map "\C-s" 'term-send-raw)
-	     (define-key term-raw-map "\C-f" 'term-send-raw)
-	     (define-key term-raw-map "\C-b" 'term-send-raw)
-	     (define-key term-raw-map "\C-p" 'term-send-raw)
-	     (define-key term-raw-map "\C-n" 'term-send-raw)
-	     (define-key term-raw-map (kbd "ESC") 'term-send-raw)
-	     (define-key term-raw-map [delete] 'term-send-raw)
-	     (define-key term-raw-map "\C-z"
-	       (lookup-key (current-global-map) "\C-z"))
-	     ))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; settings for eshell
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(require 'eshell)
-(eval-after-load "em-alias"
-  '(progn
-     (eshell/alias 'll "ls -l")
-     (eshell/alias 'la "ls -a")
-     ))
-
-
-(setq eshell-cmpl-ignore-case t)	;補完時に大文字小文字を区別しない
-(setq eshell-hist-ignoredups t)		;履歴で重複を無視する
-(setq eshell-ask-to-save-history (quote always)) ;確認なしでヒストリ保存
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; settings for gtags
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (autoload 'gtags-mode "gtags" "" t)
@@ -347,136 +207,9 @@
          ))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; evernote-mode
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(setq evernote-enml-formatter-command
-      '("w3m" "-dump" "-I" "UTF8" "-O" "UTF8"))
-(require 'evernote-mode)
-(global-set-key "\C-cec" 'evernote-create-note)
-(global-set-key "\C-ceo" 'evernote-open-note)
-(global-set-key "\C-ces" 'evernote-search-notes)
-(global-set-key "\C-ceS" 'evernote-do-saved-search)
-(global-set-key "\C-cew" 'evernote-write-note)
-(global-set-key "\C-cep" 'evernote-post-region)
-(global-set-key "\C-ceb" 'evernote-browser)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; settings for Mew
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (require 'mew)
-
-(setq mew-summary-mode-hook
-      '(lambda ()
-	 (local-set-key "\C-h" 'mew-summary-prev-page)
-	 ))
-
-(setq mew-ssl-verify-level 0
-      ;; Does not bring mail automatically at booting time
-      mew-auto-get nil
-      ;; Leave mail of pop server after get mail
-      mew-pop-delete nil
-      ;; Add extension ".mew"
-      mew-use-suffix t
-      ;; Manage unread topic
-      mew-use-unread-mark t
-      ;; Spam configuration
-      mew-spam: "X-Spam-Flag:"
-      mew-inbox-action-alist
-      '(("X-Spam-Flag:" mew-spam-assassin-or-bsfilter))
-      ;; Register password briefly
-      mew-use-cached-passwd t
-      ;; Does not bring mail at booting time
-      mew-auto-get nil
-      ;; For Biff
-      mew-use-biff t
-      mew-use-biff-bell t  ; use alarm
-      mew-biff-interval 10 ; minute
-      mew-biff-function 'my/biff-function
-      ;mew-summary-form '(type (5 date) " " (25 from) " " t (45 subj))
-      mew-summary-form '(type (5 date) " " (25 from) " " t (-1 subj))
-      )
-
-(defvar mew/gmail-default-alist
-  `(("proto"             . "%")
-    ("name"              . "Shigeru Yoshida")
-    ("user"              . "yshigeru")
-    ("imap-user"         . "yshigeru")
-    ("mail-domain"       . "gmail.com")
-    ("imap-trash-folder" . "%[Gmail]/ゴミ箱")
-    ("imap-spam-folder"  . "%[Gmail]/迷惑メール")
-    ("fcc"               . "%[Gmail]/送信済みメール")
-    ("imap-server"       . "imap.gmail.com")
-    ("imap-auth"         . t)
-    ("imap-ssl"          . t)
-    ("imap-ssl-port"     . "993")
-    ("smtp-auth"         . t)
-    ("smtp-ssl"          . t)
-    ("smtp-ssl-port"     . "465")
-    ("smtp-server"       . "smtp.gmail.com")
-    ("use-smtp-auth"     . t)))
-
-(defvar mew/gmail-lkml-alist
-  `(("proto"             . "%")
-    ("name"              . "Shigeru Yoshida")
-    ("user"              . "shigeru.yoshida")
-    ("imap-user"         . "shigeru.yoshida")
-    ("mail-domain"       . "gmail.com")
-    ("imap-trash-folder" . "%[Gmail]/ゴミ箱")
-    ("imap-spam-folder"  . "%[Gmail]/迷惑メール")
-    ("fcc"               . "%[Gmail]/送信済みメール")
-    ("imap-server"       . "imap.gmail.com")
-    ("imap-auth"         . t)
-    ("imap-ssl"          . t)
-    ("imap-ssl-port"     . "993")
-    ("smtp-auth"         . t)
-    ("smtp-ssl"          . t)
-    ("smtp-ssl-port"     . "465")
-    ("smtp-server"       . "smtp.gmail.com")
-    ("use-smtp-auth"     . t)))
-
-(defvar mew/gmail-miracle-alist
-  `(("proto"             . "%")
-    ("name"              . "Shigeru Yoshida")
-    ("user"              . "shigeru.yoshida")
-    ("imap-user"         . "shigeru.yoshida@miraclelinux.com")
-    ("mail-domain"       . "miraclelinux.com")
-    ("imap-trash-folder" . "%[Gmail]/ゴミ箱")
-    ("imap-spam-folder"  . "%[Gmail]/迷惑メール")
-    ("fcc"               . "%[Gmail]/送信済みメール")
-    ("imap-server"       . "imap.googlemail.com")
-    ("imap-auth"         . t)
-    ("imap-ssl"          . t)
-    ("imap-ssl-port"     . "993")
-    ("smtp-auth"         . t)
-    ("smtp-ssl"          . t)
-    ("smtp-ssl-port"     . "465")
-    ("smtp-server"       . "smtp.googlemail.com")
-    ("use-smtp-auth"     . t)))
-
-;; Switch to account by types "C" and renew summary by types "i"
-(setq mew-config-alist
-      (list `("default" ,@mew/gmail-lkml-alist)
-	    `("gmail" ,@mew/gmail-default-alist)
-	    `("miracle" ,@mew/gmail-miracle-alist)))
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(custom-enabled-themes (quote (sanityinc-solarized-dark)))
- '(custom-safe-themes (quote ("4aee8551b53a43a883cb0b7f3255d6859d766b6c5e14bcb01bed572fcbef4328" default))))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
-
-(setq mew-refile-guess-alist
-      '(("To:"
-	 ("linux-kernel@vger.kernel.org" "%LKML"))
-	("Cc:"
-	 ("linux-kernel@vger.kernel.org" "%LKML"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; sprit window
@@ -514,6 +247,7 @@
         (nextbuf (window-buffer (next-window))))
     (set-window-buffer (next-window) (window-buffer))
     (set-window-buffer thiswin nextbuf)))
+
 (defun swap-screen-with-cursor()
   "Swap two screen,with cursor in same buffer."
   (interactive)
@@ -522,6 +256,7 @@
     (other-window 1)
     (set-window-buffer thiswin (window-buffer))
     (set-window-buffer (selected-window) thisbuf)))
+
 (global-set-key [f2] 'swap-screen)
 (global-set-key [S-f2] 'swap-screen-with-cursor)
 
@@ -530,11 +265,3 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (require 'mozc)
 (setq default-input-method "japanese-mozc")
-(key-chord-define mozc-mode-map "aa" "aa")
-(defadvice toggle-input-method (after my-toggle-input-method activate)
-   (key-chord-mode 1))
-;; http://d.hatena.ne.jp/grandVin/20080917/1221653750
-(defadvice toggle-input-method (around toggle-input-method-around activate)
-  (let ((input-method-function-save input-method-function))
-    ad-do-it
-    (setq input-method-function input-method-function-save)))

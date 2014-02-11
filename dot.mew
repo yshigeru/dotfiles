@@ -1,0 +1,102 @@
+(setq mew-summary-mode-hook
+      '(lambda ()
+	 (local-set-key "\C-h" 'mew-summary-prev-page)
+	 ))
+
+(setq mew-ssl-verify-level 0
+      ;; Does not bring mail automatically at booting time
+      mew-auto-get nil
+      ;; Leave mail of pop server after get mail
+      mew-pop-delete nil
+      ;; Add extension ".mew"
+      mew-use-suffix t
+      ;; Manage unread topic
+      mew-use-unread-mark t
+      ;; Spam configuration
+      mew-spam: "X-Spam-Flag:"
+      mew-inbox-action-alist
+      '(("X-Spam-Flag:" mew-spam-assassin-or-bsfilter))
+      ;; Register password briefly
+      mew-use-cached-passwd t
+      ;; Does not bring mail at booting time
+      mew-auto-get nil
+      ;; For Biff
+      mew-use-biff t
+      mew-use-biff-bell t  ; use alarm
+      mew-biff-interval 10 ; minute
+      mew-biff-function 'my/biff-function
+      ;mew-summary-form '(type (5 date) " " (25 from) " " t (45 subj))
+      mew-summary-form '(type (5 date) " " (25 from) " " t (-1 subj))
+      )
+
+(defvar mew/gmail-default-alist
+  `(("proto"             . "%")
+    ("name"              . "Shigeru Yoshida")
+    ("user"              . "yshigeru")
+    ("imap-user"         . "yshigeru")
+    ("mail-domain"       . "gmail.com")
+    ("imap-trash-folder" . "%[Gmail]/ゴミ箱")
+    ("imap-spam-folder"  . "%[Gmail]/迷惑メール")
+    ("fcc"               . "%[Gmail]/送信済みメール")
+    ("imap-server"       . "imap.gmail.com")
+    ("imap-auth"         . t)
+    ("imap-ssl"          . t)
+    ("imap-ssl-port"     . "993")
+    ("smtp-auth"         . t)
+    ("smtp-ssl"          . t)
+    ("smtp-ssl-port"     . "465")
+    ("smtp-server"       . "smtp.gmail.com")
+    ("use-smtp-auth"     . t)
+    ))
+
+(defvar mew/gmail-lkml-alist
+  `(("proto"             . "%")
+    ("name"              . "Shigeru Yoshida")
+    ("user"              . "shigeru.yoshida")
+    ("imap-user"         . "shigeru.yoshida")
+    ("mail-domain"       . "gmail.com")
+    ("imap-trash-folder" . "%[Gmail]/ゴミ箱")
+    ("imap-spam-folder"  . "%[Gmail]/迷惑メール")
+    ("fcc"               . "%[Gmail]/送信済みメール")
+    ("imap-server"       . "imap.gmail.com")
+    ("imap-auth"         . t)
+    ("imap-ssl"          . t)
+    ("imap-ssl-port"     . "993")
+    ("smtp-auth"         . t)
+    ("smtp-ssl"          . t)
+    ("smtp-ssl-port"     . "465")
+    ("smtp-server"       . "smtp.gmail.com")
+    ("use-smtp-auth"     . t)
+    ("dcc"               . "shigeru.yoshida@gmail.com")
+    ))
+
+(defvar mew/gmail-miracle-alist
+  `(("proto"             . "%")
+    ("name"              . "Shigeru Yoshida")
+    ("user"              . "shigeru.yoshida")
+    ("imap-user"         . "shigeru.yoshida@miraclelinux.com")
+    ("mail-domain"       . "miraclelinux.com")
+    ("imap-trash-folder" . "%[Gmail]/ゴミ箱")
+    ("imap-spam-folder"  . "%[Gmail]/迷惑メール")
+    ("fcc"               . "%[Gmail]/送信済みメール")
+    ("imap-server"       . "imap.googlemail.com")
+    ("imap-auth"         . t)
+    ("imap-ssl"          . t)
+    ("imap-ssl-port"     . "993")
+    ("smtp-auth"         . t)
+    ("smtp-ssl"          . t)
+    ("smtp-ssl-port"     . "465")
+    ("smtp-server"       . "smtp.googlemail.com")
+    ("use-smtp-auth"     . t)))
+
+;; Switch to account by types "C" and renew summary by types "i"
+(setq mew-config-alist
+      (list `("default" ,@mew/gmail-lkml-alist)
+	    `("gmail" ,@mew/gmail-default-alist)
+	    `("miracle" ,@mew/gmail-miracle-alist)))
+
+(setq mew-refile-guess-alist
+      '(("To:"
+	 ("linux-kernel@vger.kernel.org" "%LKML"))
+	("Cc:"
+	 ("linux-kernel@vger.kernel.org" "%LKML"))))
