@@ -1,3 +1,4 @@
+;; -*- emacs-lisp -*-
 (setq mew-summary-mode-hook
       '(lambda ()
 	 (local-set-key "\C-h" 'mew-summary-prev-page)
