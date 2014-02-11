@@ -48,6 +48,7 @@
     ("smtp-ssl-port"     . "465")
     ("smtp-server"       . "smtp.gmail.com")
     ("use-smtp-auth"     . t)
+    ("dcc"               . "yshigeru@gmail.com")
     ))
 
 (defvar mew/gmail-lkml-alist
@@ -88,7 +89,9 @@
     ("smtp-ssl"          . t)
     ("smtp-ssl-port"     . "465")
     ("smtp-server"       . "smtp.googlemail.com")
-    ("use-smtp-auth"     . t)))
+    ("use-smtp-auth"     . t)
+    ("dcc"               . "shigeru.yoshida@miraclelinux.com")
+    ))
 
 ;; Switch to account by types "C" and renew summary by types "i"
 (setq mew-config-alist
