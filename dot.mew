@@ -104,3 +104,11 @@
 	 ("linux-kernel@vger.kernel.org" "%LKML"))
 	("Cc:"
 	 ("linux-kernel@vger.kernel.org" "%LKML"))))
+
+(defadvice mew-input-folder-search-forward-1
+  (around
+   mew-input-folder-search-forward-1-with-migemo
+   activate)
+  "migemo を使ってフォルダ名を検索する。"
+  (let ((migemo-do-isearch t))
+    ad-do-it))
