@@ -28,6 +28,7 @@
       mew-biff-function 'my/biff-function
       ;mew-summary-form '(type (5 date) " " (25 from) " " t (45 subj))
       mew-summary-form '(type (5 date) " " (25 from) " " t (-1 subj))
+      ;mew-imap-size 0
       )
 
 (defvar mew/gmail-default-alist
@@ -101,9 +102,29 @@
 
 (setq mew-refile-guess-alist
       '(("To:"
-	 ("linux-kernel@vger.kernel.org" "%LKML"))
+	 ("linux-kernel@vger.kernel.org"	"%LKML")
+	 ("oki-ppc-support@miraclelinux.com"	"%沖/MPC8548")
+	 ("oki-p2020-support@miraclelinux.com"	"%沖/P2020")
+	 ("dev-oki-ppc@miraclelinux.com"	"%沖/P2020")
+	 ("dev-oki-ppc@miraclelinux.com"	"%沖/MPC8548")
+	 ("dev-oki-cgl@miraclelinux.com"	"%沖/CGL")
+	 ("oki-cgl-support@miraclelinux.com"	"%沖/CGL")
+	 ("nec-atc-support@miraclelinux.com"	"%NEC/航空管制")
+	 ("nec-ft-tech@miraclelinux.com"	"%NEC/FT")
+	 )
 	("Cc:"
-	 ("linux-kernel@vger.kernel.org" "%LKML"))))
+	 ("linux-kernel@vger.kernel.org"	"%LKML")
+	 ("oki-ppc-support@miraclelinux.com"	"%沖/MPC8548")
+	 ("oki-p2020-support@miraclelinux.com"	"%沖/P2020")
+	 ("dev-oki-ppc@miraclelinux.com"	"%沖/P2020")
+	 ("dev-oki-ppc@miraclelinux.com"	"%沖/MPC8548")
+	 ("dev-oki-cgl@miraclelinux.com"	"%沖/CGL")
+	 ("oki-cgl-support@miraclelinux.com"	"%沖/CGL")
+	 ("nec-atc-support@miraclelinux.com"	"%NEC/航空管制")
+	 ("nec-ft-tech@miraclelinux.com"	"%NEC/FT")
+	 )
+	(t "%[Gmail]/すべてのメール")
+	))
 
 (defadvice mew-input-folder-search-forward-1
   (around
@@ -112,3 +133,21 @@
   "migemo を使ってフォルダ名を検索する。"
   (let ((migemo-do-isearch t))
     ad-do-it))
+
+(defvar mew-refile-guess-control
+  '(mew-refile-ctrl-auto-boundary
+    mew-refile-guess-by-alist
+    mew-refile-ctrl-throw
+    mew-refile-guess-by-newsgroups
+    mew-refile-guess-by-folder
+    mew-refile-ctrl-throw
+    mew-refile-guess-by-thread
+    mew-refile-ctrl-throw
+    mew-refile-guess-by-from-folder
+    mew-refile-ctrl-throw
+    mew-refile-guess-by-from
+    mew-refile-ctrl-throw
+    mew-refile-guess-by-default))
+
+(setq mew-cite-fields '("Date:" "From:"))
+(setq mew-cite-format "On %s %s wrote:\n")
