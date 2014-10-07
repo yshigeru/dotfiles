@@ -94,11 +94,35 @@
     ("dcc"               . "shigeru.yoshida@miraclelinux.com")
     ))
 
+(defvar mew/windriver-exchange-alist
+  `(("proto"             . "%")
+    ("name"              . "Shigeru Yoshida")
+    ("user"              . "shigeru.yoshida")
+    ("mail-domain"       . "windriver.com")
+    ("imap-user"         . "CORP\\syoshida")
+    ("imap-server"       . "localhost")
+    ("imap-port"         . "1143")
+    ("imap-ssl"          . nil)
+    ("imap-auth"         . t)
+    ("imap-trash-folder" . "%Trash")
+    ("imap-spam-folder"  . "%Junk")
+    ("fcc"               . "%Sent")
+    ("smtp-user"         . "CORP\\syoshida")
+    ("smtp-server"       . "localhost")
+    ("smtp-port"         . "1025")
+    ("smtp-ssl"          . nil)
+    ("smtp-auth"         . t)
+    ("dcc"               . "shigeru.yoshida@windriver.com")
+    ))
+
+
 ;; Switch to account by types "C" and renew summary by types "i"
 (setq mew-config-alist
       (list `("default" ,@mew/gmail-lkml-alist)
 	    `("gmail" ,@mew/gmail-default-alist)
-	    `("miracle" ,@mew/gmail-miracle-alist)))
+	    `("miracle" ,@mew/gmail-miracle-alist)
+	    `("windriver" ,@mew/windriver-exchange-alist)
+	    ))
 
 (setq mew-refile-guess-alist
       '(("To:"
