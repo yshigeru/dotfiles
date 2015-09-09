@@ -6,8 +6,7 @@
 (when window-system
   (set-default-font "Ricty:pixelsize=14")
   (require 'color-theme)
-  (color-theme-initialize)
-  (color-theme-robin-hood)
+  (load-theme 'manoj-dark t)
   (set-face-attribute 'mode-line          nil :box nil)
   (set-face-attribute 'mode-line-inactive nil :box nil)
   (set-face-foreground 'mode-line-buffer-id nil)
@@ -27,7 +26,6 @@
 (global-font-lock-mode t)
 (column-number-mode t)
 (setq confirm-kill-emacs 'y-or-n-p)
-;(global-linum-mode)
 (setq cursor-in-non-selected-windows nil)
 
 (require 'server)
@@ -36,14 +34,18 @@
 
 (setq-default cursor-in-non-selected-windows nil)
 
+(require 'magit)
+(require 'geeknote)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; key bindings
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (global-set-key "\C-h" 'delete-backward-char)
 (global-set-key "\C-xl" 'goto-line)
 (global-set-key "\C-c\C-m" 'compile)
-(global-set-key "\C-xS" 'multi-shell-new)
-(global-set-key "\C-xT" 'multi-term)
+(global-set-key "\C-xS" 'term+mux-new)
+(global-set-key "\C-x\C-o" 'find-file-other-window)
+(global-set-key "\M-\C-s" 'helm-swoop)
 
 ;; Linux C conding style
 (defun c-lineup-arglist-tabs-only (ignored)
@@ -82,8 +84,7 @@
 	     ;(setq indent-tabs-mode nil)
 	     ;(setq c-basic-offset 4)
              (auto-complete-mode)
-	     (gtags-mode 1)
-	     (gtags-make-complete-list)
+	     ;(gtags-make-complete-list)
              ))
 
 (add-hook 'lisp-mode
@@ -99,8 +100,28 @@
 (add-hook 'find-file-hook
           '(lambda ()
              (interactive)
-             (view-mode)
-	     ))
+	     (unless (eq major-mode 'org-mode)
+	       (view-mode)
+	       )))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; package.el
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(require 'package)
+(add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/") t) ;MELPA
+(add-to-list 'package-archives '("melpa-stable" . "http://stable.melpa.org/packages/") t) ;MELPA-stable
+(add-to-list 'package-archives  '("marmalade" . "http://marmalade-repo.org/packages/") t) ;Marmalade
+(add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/") t) ;Org
+(package-initialize)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; helm
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(require 'helm-config)
+(helm-mode 1)
+;(custom-set-variables '(helm-ff-auto-update-initial-value nil))
+(define-key helm-map (kbd "C-h") 'delete-backward-char)
+(define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; settings for cmigemo
@@ -117,6 +138,21 @@
   (setq migemo-command "cmigemo")
   (setq migemo-dictionary "/usr/share/cmigemo/utf-8/migemo-dict"))
 
+(require 'helm-migemo)
+;;; この修正が必要
+(eval-after-load "helm-migemo"
+  '(defun helm-compile-source--candidates-in-buffer (source)
+     (helm-aif (assoc 'candidates-in-buffer source)
+         (append source
+                 `((candidates
+                    . ,(or (cdr it)
+                           (lambda ()
+                             ;; Do not use `source' because other plugins
+                             ;; (such as helm-migemo) may change it
+                             (helm-candidates-in-buffer (helm-get-current-source)))))
+                   (volatile) (match identity)))
+       source)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; settings for auto-complete
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -127,35 +163,6 @@
 (setq ac-use-quick-help nil)
 (set-face-foreground 'ac-completion-face "black")
 (set-face-background 'ac-completion-face "white")
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; settings for iswitchb
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(iswitchb-mode 1)
-(add-hook 'iswitchb-define-mode-map-hook
-          'iswitchb-my-keys)
-
-(defun iswitchb-my-keys ()
-  "Add my keybindings for iswitchb."
-  (define-key iswitchb-mode-map [right] 'iswitchb-next-match)
-  (define-key iswitchb-mode-map [left] 'iswitchb-prev-match)
-  (define-key iswitchb-mode-map "\C-f" 'iswitchb-next-match)
-  (define-key iswitchb-mode-map " " 'iswitchb-next-match)
-  (define-key iswitchb-mode-map "\C-b" 'iswitchb-prev-match)
-  )
-
-(defadvice iswitchb-exhibit
-  (after
-   iswitchb-exhibit-with-display-buffer
-   activate)
-  "Show selected buffer in window."
-  (when (and (eq iswitchb-method iswitchb-default-method)
-             iswitchb-matches)
-    (select-window
-     (get-buffer-window (cadr (buffer-list))))
-    (let ((iswitchb-method 'samewindow))
-      (iswitchb-visit-buffer (get-buffer (car iswitchb-matches))))
-    (select-window (minibuffer-window))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; settings for view-mode
@@ -193,18 +200,6 @@
 (setq scheme-program-name "gosh -i")
 (autoload 'scheme-mode "cmuscheme" "Major mode for Scheme." t)
 (autoload 'run-scheme "cmuscheme" "Run an inferior Scheme process." t)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; settings for gtags
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(autoload 'gtags-mode "gtags" "" t)
-(setq gtags-mode-hook
-      '(lambda ()
-         (local-set-key "\M-t" 'gtags-find-tag)
-         (local-set-key "\M-r" 'gtags-find-rtag)
-         (local-set-key "\M-s" 'gtags-find-symbol)
-         (local-set-key "\C-t" 'gtags-pop-stack)
-         ))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; settings for Mew
@@ -281,25 +276,93 @@
 (setq org-startup-truncated nil)
 (setq org-return-follows-link t)
 (add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
-;; (org-remember-insinuate)
+;(org-remember-insinuate)
 (setq org-directory "~/Dropbox/memo/")
-(setq org-default-notes-file (concat org-directory "agenda.org"))
+(setq org-default-notes-file (concat org-directory "windriver.org"))
+(setq org-reverse-note-order t)
+
 (setq org-capture-templates
-      '(("t" "Todo" entry
-         (file+headline nil "Inbox")
-         "** TODO %?\n   %i\n   %a\n   %t")
-        ("b" "Bug" entry
-         (file+headline nil "Inbox")
-         "** TODO %?   :bug:\n   %i\n   %a\n   %t")
-        ("i" "Idea" entry
-         (file+headline nil "New Ideas")
-         "** %?\n   %i\n   %a\n   %t")))
+      '(("t" "Todo" entry (file+headline nil "Inbox")     "* TODO %?\n %U\n %i" :prepend t)
+	("n" "Note" entry (file+headline nil "Inbox")     "* %?\n %U\n %i" :prepend t)
+	))
+
+(setq org-todo-keywords
+      '((sequence "TODO" "OPEN" "|" "DONE" "CLOSED")))
 
 (setq org-agenda-files (list org-directory)) ;agendaを使うため
 ;; ショートカットキー
 (global-set-key "\C-cl" 'org-store-link)
-(global-set-key "\C-co" 'org-capture)
+(global-set-key "\C-cc" 'org-capture)
 (global-set-key "\C-ca" 'org-agenda)
 (global-set-key "\C-cb" 'org-iswitchb)
 
 (add-hook 'org-mode-hook 'turn-on-font-lock)
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(org-agenda-files (quote ("~/Dropbox/memo/windriver.org"))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; aspell
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(setq-default ispell-program-name "aspell")
+(eval-after-load "ispell"
+  '(add-to-list 'ispell-skip-region-alist '("[^\000-\377]+")))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; shell-pop
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(require 'shell-pop)
+(setq shell-pop-internal-mode-func '(lambda () (term+mux-new)))
+(global-set-key "\C-t" 'shell-pop)
+
+(defun exit ()
+  (interactive)
+  (when (eq major-mode 'term-mode)
+    (term-send-eof)
+    (sit-for 0.05)
+    (delete-window)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; helm-gtags
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(require 'helm-config)
+(require 'helm-gtags)
+(add-hook 'c-mode-hook 'helm-gtags-mode)
+
+;; key bindings
+(add-hook 'helm-gtags-mode-hook
+          '(lambda ()
+              (local-set-key (kbd "M-.") 'helm-gtags-find-tag)
+              (local-set-key (kbd "M-r") 'helm-gtags-find-rtag)
+              (local-set-key (kbd "M-s") 'helm-gtags-find-symbol)
+              (local-set-key (kbd "C-t") 'helm-gtags-pop-stack)
+	      (local-set-key (kbd "M-p") 'helm-gtags-find-pattern)
+	      (local-set-key (kbd "M-P") 'helm-gtags-parse-file)
+	      (local-set-key (kbd "M-,") 'helm-gtags-resume)
+	      ))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; google-translate
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(require 'google-translate)
+(global-set-key "\C-ct" 'google-translate-at-point)
+(global-set-key "\C-cT" 'google-translate-query-translate)
+(global-set-key "\C-cr" 'google-translate-at-point-reverse)
+(global-set-key "\C-cR" 'google-translate-query-translate-reverse)
+
+;; 翻訳のデフォルト値を設定 (ja -> en) (無効化は C-u する)
+(custom-set-variables
+ '(google-translate-default-source-language "ja")
+ '(google-translate-default-target-language "en"))
+
+;; google-translate.el の翻訳バッファをポップアップで表示させる
+;;(push '("*Google Translate*") popwin:special-display-config)
