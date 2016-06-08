@@ -4,7 +4,7 @@ export PATH=/opt/aarch64-toolchain/bin:$PATH
 export PATH=/opt/Foundation_v8pkg:$PATH
 export PATH=/opt/arm-asianux-linux-gnueabi-toolchain/bin:$PATH
 
-export PS1='[\u@\h \W]\$ '
+export PS1='[\u@\H \W]\$ '
 export HISTSIZE=1000000
 
 export EDITOR=vi
