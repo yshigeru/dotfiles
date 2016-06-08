@@ -1,3 +1,4 @@
+# -*- shell-script -*-
 # Set up the prompt
 PROMPT='%K{blue}%n@%m%k %F{white}%# %b%f%k'
 RPROMPT='%B%F{green}%53<...<%~%}'
