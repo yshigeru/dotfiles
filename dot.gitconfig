@@ -1,3 +1,5 @@
 [user]
 	name = Shigeru Yoshida
-	email = shigeru.yoshida@miraclelinux.com
+	email = shigeru.yoshida@windriver.com
+[core]
+	editor = vi
