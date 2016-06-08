@@ -28,7 +28,7 @@
       mew-biff-function 'my/biff-function
       ;mew-summary-form '(type (5 date) " " (25 from) " " t (45 subj))
       mew-summary-form '(type (5 date) " " (25 from) " " t (-1 subj))
-      ;mew-imap-size 0
+      mew-imap-size 0
       )
 
 (defvar mew/gmail-default-alist
@@ -106,7 +106,7 @@
     ("imap-auth"         . t)
     ("imap-trash-folder" . "%Trash")
     ("imap-spam-folder"  . "%Junk")
-    ("fcc"               . "%Sent")
+    ;("fcc"               . "%Sent")
     ("smtp-user"         . "CORP\\syoshida")
     ("smtp-server"       . "localhost")
     ("smtp-port"         . "1025")
@@ -114,7 +114,6 @@
     ("smtp-auth"         . t)
     ("dcc"               . "shigeru.yoshida@windriver.com")
     ))
-
 
 ;; Switch to account by types "C" and renew summary by types "i"
 (setq mew-config-alist
