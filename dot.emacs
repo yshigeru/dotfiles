@@ -4,16 +4,14 @@
 ;; general settings
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (when window-system
-  (set-default-font "Ricty:pixelsize=14")
-  (require 'color-theme)
+  (set-default-font "Ricty Diminished:pixelsize=14")
   (load-theme 'manoj-dark t)
   (set-face-attribute 'mode-line          nil :box nil)
   (set-face-attribute 'mode-line-inactive nil :box nil)
   (set-face-foreground 'mode-line-buffer-id nil)
   (set-face-background 'mode-line-buffer-id nil)
-
   (setq initial-frame-alist
-	(append '((width . 120) (height . 60)) initial-frame-alist))
+	(append '((width . 120) (height . 65)) initial-frame-alist))
   )
 
 (menu-bar-mode -1)
@@ -35,7 +33,6 @@
 (setq-default cursor-in-non-selected-windows nil)
 
 (require 'magit)
-(require 'geeknote)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; key bindings
@@ -137,21 +134,6 @@
   (migemo-init)
   (setq migemo-command "cmigemo")
   (setq migemo-dictionary "/usr/share/cmigemo/utf-8/migemo-dict"))
-
-(require 'helm-migemo)
-;;; この修正が必要
-(eval-after-load "helm-migemo"
-  '(defun helm-compile-source--candidates-in-buffer (source)
-     (helm-aif (assoc 'candidates-in-buffer source)
-         (append source
-                 `((candidates
-                    . ,(or (cdr it)
-                           (lambda ()
-                             ;; Do not use `source' because other plugins
-                             ;; (such as helm-migemo) may change it
-                             (helm-candidates-in-buffer (helm-get-current-source)))))
-                   (volatile) (match identity)))
-       source)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; settings for auto-complete
@@ -317,26 +299,13 @@
 (eval-after-load "ispell"
   '(add-to-list 'ispell-skip-region-alist '("[^\000-\377]+")))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; shell-pop
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(require 'shell-pop)
-(setq shell-pop-internal-mode-func '(lambda () (term+mux-new)))
-(global-set-key "\C-t" 'shell-pop)
-
-(defun exit ()
-  (interactive)
-  (when (eq major-mode 'term-mode)
-    (term-send-eof)
-    (sit-for 0.05)
-    (delete-window)))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; helm-gtags
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (require 'helm-config)
 (require 'helm-gtags)
 (add-hook 'c-mode-hook 'helm-gtags-mode)
+(add-hook 'python-mode-hook 'helm-gtags-mode)
 
 ;; key bindings
 (add-hook 'helm-gtags-mode-hook
@@ -350,20 +319,3 @@
 	      (local-set-key (kbd "M-P") 'helm-gtags-parse-file)
 	      (local-set-key (kbd "M-,") 'helm-gtags-resume)
 	      ))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; google-translate
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(require 'google-translate)
-(global-set-key "\C-ct" 'google-translate-at-point)
-(global-set-key "\C-cT" 'google-translate-query-translate)
-(global-set-key "\C-cr" 'google-translate-at-point-reverse)
-(global-set-key "\C-cR" 'google-translate-query-translate-reverse)
-
-;; 翻訳のデフォルト値を設定 (ja -> en) (無効化は C-u する)
-(custom-set-variables
- '(google-translate-default-source-language "ja")
- '(google-translate-default-target-language "en"))
-
-;; google-translate.el の翻訳バッファをポップアップで表示させる
-;;(push '("*Google Translate*") popwin:special-display-config)
