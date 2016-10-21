@@ -106,7 +106,8 @@
     ("imap-auth"         . t)
     ("imap-trash-folder" . "%Trash")
     ("imap-spam-folder"  . "%Junk")
-    ;("fcc"               . "%Sent")
+;    ("fcc"               . "%Sent")
+    ("fcc"               . nil)
     ("smtp-user"         . "CORP\\syoshida")
     ("smtp-server"       . "localhost")
     ("smtp-port"         . "1025")
@@ -115,12 +116,36 @@
     ("dcc"               . "shigeru.yoshida@windriver.com")
     ))
 
+(defvar mew/windriver-imap-alist
+  `(("proto"             . "%")
+    ("name"              . "Shigeru Yoshida")
+    ("user"              . "shigeru.yoshida")
+    ("mail-domain"       . "windriver.com")
+    ("imap-user"         . "CORP\\syoshida")
+    ("imap-server"       . "prod-webmail.corp.ad.wrs.com")
+    ("imap-port"         . "143")
+    ("imap-ssl"          . t)
+    ("imap-auth"         . t)
+    ("imap-trash-folder" . "%Trash")
+    ("imap-spam-folder"  . "%Junk")
+    ;("fcc"               . "%Sent")
+    ("smtp-user"         . "CORP\\syoshida")
+    ("smtp-server"       . "prod-webmail.corp.ad.wrs.com")
+    ("smtp-port"         . "submission")
+    ("smtp-ssl"          . t)
+    ("smtp-ssl-port"     . "submission")
+    ("smtp-auth"         . t)
+    ("dcc"               . "shigeru.yoshida@windriver.com")
+    ))
+
+
 ;; Switch to account by types "C" and renew summary by types "i"
 (setq mew-config-alist
       (list `("default" ,@mew/gmail-lkml-alist)
 	    `("gmail" ,@mew/gmail-default-alist)
 	    `("miracle" ,@mew/gmail-miracle-alist)
 	    `("windriver" ,@mew/windriver-exchange-alist)
+	    `("windriver-imap" ,@mew/windriver-imap-alist)
 	    ))
 
 (setq mew-refile-guess-alist
@@ -172,5 +197,59 @@
     mew-refile-ctrl-throw
     mew-refile-guess-by-default))
 
-(setq mew-cite-fields '("Date:" "From:"))
-(setq mew-cite-format "On %s %s wrote:\n")
+;; 引用する際のヘッダ
+(setq mew-cite-strings-function
+      (lambda ()
+        (let* ((date (mew-cite-get-value mew-date:))
+               (from (mew-cite-get-value mew-from:))
+               (cite-from1 (cond
+			    ((and from (string-match "\"?\\([^\"]+\\)?\"?\\s-*<\\(.+\\)>" from))
+			     (or (match-string 1 from) (match-string 2 from)))
+			    (t "Unknown")))
+	       (cite-from2 (if (string-match "\\(\\s-+\\)$" cite-from1)
+			       (substring cite-from1 0 (match-beginning 0))
+			     cite-from1)))
+          (format "\nOn %s, %s wrote:\n" date cite-from2))))
+
+(setq mew-search-method 'est)
+
+;; ローカル時刻を表示
+(defvar mew-my-message-date-overlay nil)
+
+(defun mew-my-message-date-overlay ()
+  (or
+   mew-my-message-date-overlay
+   (setq mew-my-message-date-overlay
+         (make-overlay (point-min) (point-min)))))
+
+(defun mew-my-message-display-local-date ()
+  (condition-case err
+      (save-excursion
+        (goto-char (point-min))
+        (when (re-search-forward (concat "^" mew-date: " *\\(.*\\)") nil t)
+          (let* ((original (match-string 1))
+                 (start (match-beginning 1))
+                 (end (match-end 1))
+                 (ov (mew-my-message-date-overlay))
+                 (time (parse-time-string original))
+                 (orig-tz (nth 8 time))
+                 (tz (nth 8 (decode-time (current-time))))
+                 (date (apply 'encode-time time))
+                 (local (mew-time-ctz-to-rfc date)))
+            (unless (equal orig-tz tz)
+              (let ((new (format "%s == %s" local original)))
+                (move-overlay ov start end (current-buffer))
+                (overlay-put ov 'display new))))))
+    (error
+     (message "%s" err))))
+
+(add-hook 'mew-message-hook 'mew-my-message-display-local-date)
+
+;; 表示しないヘッダの設定
+(setq mew-field-spec
+      (append '(("^Received-SPF" nil)
+		("^IronPort-PHdr" nil)
+		("^Thread-Topic" nil)
+		("^Thread-Index" nil)
+		)
+	      mew-field-spec))
