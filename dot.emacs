@@ -4,14 +4,19 @@
 ;; general settings
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (when window-system
-  (set-default-font "Ricty Diminished:pixelsize=14")
+  (set-face-attribute 'default nil :family "Ricty" :height 105)
+  (set-fontset-font (frame-parameter nil 'font) 'japanese-jisx0208 (cons "Ricty" "iso10646-1"))
+  (set-fontset-font (frame-parameter nil 'font) 'japanese-jisx0212 (cons "Ricty" "iso10646-1"))
+  (set-fontset-font (frame-parameter nil 'font) 'katakana-jisx0201 (cons "Ricty" "iso10646-1"))
+
   (load-theme 'manoj-dark t)
   (set-face-attribute 'mode-line          nil :box nil)
   (set-face-attribute 'mode-line-inactive nil :box nil)
   (set-face-foreground 'mode-line-buffer-id nil)
   (set-face-background 'mode-line-buffer-id nil)
+
   (setq initial-frame-alist
-	(append '((width . 120) (height . 65)) initial-frame-alist))
+	(append '((width . 120) (height . 64)) initial-frame-alist))
   )
 
 (menu-bar-mode -1)
@@ -43,6 +48,7 @@
 (global-set-key "\C-xS" 'term+mux-new)
 (global-set-key "\C-x\C-o" 'find-file-other-window)
 (global-set-key "\M-\C-s" 'helm-swoop)
+(global-set-key "\C-t" 'pop-tag-mark)
 
 ;; Linux C conding style
 (defun c-lineup-arglist-tabs-only (ignored)
@@ -319,3 +325,55 @@
 	      (local-set-key (kbd "M-P") 'helm-gtags-parse-file)
 	      (local-set-key (kbd "M-,") 'helm-gtags-resume)
 	      ))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; eshell
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; eshellのUNIXコマンドエミュレーションを使わない
+;; (eval-after-load "esh-module"
+;;   '(setq eshell-modules-list (delq 'eshell-ls (delq 'eshell-unix eshell-modules-list))))
+
+(defun eshell/clear ()
+  "Clear the eshell buffer."
+  (let ((inhibit-read-only t))
+    (erase-buffer)
+    ;(eshell-send-input)
+    ))
+
+;; aliasの設定
+(mapcar '(lambda (elm)
+	   (add-to-list 'eshell-command-aliases-list elm))
+	'(("la" "ls -a $*") ("ll" "ls -lh $*") ("ec" "emacsclient -n $*")
+	  ("h" "history $*") ("etags" "ctags -R -e")
+	  ))
+	  
+;; helm で履歴から入力
+(add-hook 'eshell-mode-hook
+          '(lambda ()
+	     (define-key eshell-mode-map
+	       (kbd "M-p")
+	       '(lambda ()
+		  (interactive)
+		  (recenter-top-bottom)
+		  (helm-eshell-history)))))
+
+;; helm で補完
+(add-hook 'eshell-mode-hook
+	  '(lambda ()
+	     (define-key eshell-mode-map
+	       (kbd "M-n")
+	       '(lambda ()
+		  (interactive)
+		  (recenter-top-bottom)
+		  (helm-esh-pcomplete)))))
+
+;(setq eshell-scroll-show-maximum-output nil)
+
+(global-set-key "\C-z\C-z" '(lambda () (interactive) (eshell t)))
+
+(setq eshell-visual-commands
+      '("vi" "screen" "top" "less" "more" "lynx" "ncftp" "pine" "tin" "trn" "elm"
+	"tmux" "bash" "zsh"))
+
+(setq eshell-visual-subcommands
+      '(("git" "log" "l" "diff" "show" "commit")))
