@@ -56,3 +56,4 @@ alias mkcscope='find . -name "*.[chxsS]" > cscope.files; cscope -b -q -k'
 
 EDITOR=vi
 PAGER=less
+TERM=xterm-256color
