@@ -51,9 +51,13 @@ alias grep='grep --color=auto'
 alias egrep='egrep --color=auto'
 alias fgrep='fgrep --color=auto'
 alias etags=/usr/bin/etags
-alias ec='emacsclient -n'
-alias mkcscope='find . -name "*.[chxsS]" > cscope.files; cscope -b -q -k'
+#alias ec='emacsclient -n'
+alias ec='emacsclient -nw'
+alias mew="emacsclient -nw -e '(mew)'"
+alias start-emacs='emacs --daemon'
+alias kill-emacs="emacsclient -e '(kill-emacs)'"
+alias etags='ctags -e -R'
 
 EDITOR=vi
 PAGER=less
-TERM=xterm-256color
+TERM=screen-256color
