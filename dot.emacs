@@ -10,6 +10,7 @@
   (set-fontset-font (frame-parameter nil 'font) 'katakana-jisx0201 (cons "Ricty" "iso10646-1"))
 
   (load-theme 'manoj-dark t)
+
   (set-face-attribute 'mode-line          nil :box nil)
   (set-face-attribute 'mode-line-inactive nil :box nil)
   (set-face-foreground 'mode-line-buffer-id nil)
@@ -35,7 +36,7 @@
 (unless (server-running-p)
   (server-start))
 
-(setq-default cursor-in-non-selected-windows nil)
+(setq vc-follow-symlinks t)
 
 (require 'magit)
 
@@ -100,12 +101,7 @@
              (setq indent-tabs-mode t)
              ))
 
-(add-hook 'find-file-hook
-          '(lambda ()
-             (interactive)
-	     (unless (eq major-mode 'org-mode)
-	       (view-mode)
-	       )))
+(add-hook 'find-file-hook 'view-mode)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; package.el
@@ -252,10 +248,12 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; elscreen
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(require 'elscreen)
-(elscreen-start)
-(setq elscreen-display-tab nil)
-(global-set-key "\C-zl" 'elscreen-toggle)
+;; (when window-system
+;;   (require 'elscreen)
+;;   (elscreen-start)
+;;   (setq elscreen-display-tab nil)
+;;   (global-set-key "\C-zl" 'elscreen-toggle)
+;;   )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; org-mode
@@ -311,7 +309,6 @@
 (require 'helm-config)
 (require 'helm-gtags)
 (add-hook 'c-mode-hook 'helm-gtags-mode)
-(add-hook 'python-mode-hook 'helm-gtags-mode)
 
 ;; key bindings
 (add-hook 'helm-gtags-mode-hook
@@ -369,7 +366,7 @@
 
 ;(setq eshell-scroll-show-maximum-output nil)
 
-(global-set-key "\C-z\C-z" '(lambda () (interactive) (eshell t)))
+;(global-set-key "\C-z\C-z" '(lambda () (interactive) (eshell t)))
 
 (setq eshell-visual-commands
       '("vi" "screen" "top" "less" "more" "lynx" "ncftp" "pine" "tin" "trn" "elm"
