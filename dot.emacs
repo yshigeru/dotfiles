@@ -30,7 +30,7 @@
 (global-font-lock-mode t)
 (column-number-mode t)
 (setq confirm-kill-emacs 'y-or-n-p)
-(setq cursor-in-non-selected-windows nil)
+(setq-default cursor-in-non-selected-windows nil)
 
 (require 'server)
 (unless (server-running-p)
@@ -39,6 +39,18 @@
 (setq vc-follow-symlinks t)
 
 (require 'magit)
+
+;; ブックマークを変更したら即保存する
+(setq bookmark-save-flag 1)
+
+;; 超整理法
+(progn
+  (setq bookmark-sort-flag nil)
+  (defun bookmark-arrange-latest-top ()
+    (let ((latest ( bookmark-get-bookmark bookmark)))
+      (setq bookmark-alist (cons latest (delq latest bookmark-aliset))))
+    (bookmark-save))
+  (add-hook 'bookmark-after-jump-hook 'bookmark-arrange-latest-top))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; key bindings
@@ -248,12 +260,12 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; elscreen
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; (when window-system
-;;   (require 'elscreen)
-;;   (elscreen-start)
-;;   (setq elscreen-display-tab nil)
-;;   (global-set-key "\C-zl" 'elscreen-toggle)
-;;   )
+(when window-system
+  (require 'elscreen)
+  (elscreen-start)
+  (setq elscreen-display-tab nil)
+  (global-set-key "\C-zl" 'elscreen-toggle)
+  )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; org-mode
