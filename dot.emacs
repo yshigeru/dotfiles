@@ -17,7 +17,7 @@
   (set-face-background 'mode-line-buffer-id nil)
 
   (setq initial-frame-alist
-	(append '((width . 120) (height . 64)) initial-frame-alist))
+	(append '((width . 120) (height . 66)) initial-frame-alist))
   )
 
 (menu-bar-mode -1)
