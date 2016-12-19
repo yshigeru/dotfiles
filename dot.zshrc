@@ -51,8 +51,7 @@ alias grep='grep --color=auto'
 alias egrep='egrep --color=auto'
 alias fgrep='fgrep --color=auto'
 alias etags=/usr/bin/etags
-#alias ec='emacsclient -n'
-alias ec='emacsclient -nw'
+alias ec='emacsclient -n'
 alias mew="emacsclient -nw -e '(mew)'"
 alias start-emacs='emacs --daemon'
 alias kill-emacs="emacsclient -e '(kill-emacs)'"
