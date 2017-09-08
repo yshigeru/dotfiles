@@ -23,3 +23,13 @@ alias grep='grep --color=auto'
 alias egrep='egrep --color=auto'
 alias fgrep='fgrep --color=auto'
 alias e='emacsclient -n'
+
+f()
+{
+    find $1 -name $2
+}
+
+ggrep()
+{
+    find $2 -name $3 -exec grep --color=auto $1 {} /dev/null \;
+}
