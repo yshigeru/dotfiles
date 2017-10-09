@@ -1,6 +1,6 @@
 # -*- shell-script -*-
 # Set up the prompt
-PROMPT='%K{blue}%n@%m%k %F{white}%# %b%f%k'
+PROMPT='%(?.%K{blue}.%K{red})%n@%m%k %F{white}%# %b%f%k'
 RPROMPT='%B%F{green}%53<...<%~%}'
 
 setopt histignorealldups sharehistory
@@ -50,12 +50,7 @@ alias la='ls -a'
 alias grep='grep --color=auto'
 alias egrep='egrep --color=auto'
 alias fgrep='fgrep --color=auto'
-alias etags=/usr/bin/etags
-alias ec='emacsclient -n'
-alias mew="emacsclient -nw -e '(mew)'"
-alias start-emacs='emacs --daemon'
-alias kill-emacs="emacsclient -e '(kill-emacs)'"
-alias etags='ctags -e -R'
+alias e='emacsclient -n'
 
 EDITOR=vi
 PAGER=less
