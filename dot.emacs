@@ -4,7 +4,7 @@
 ;; general settings
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (when window-system
-  (set-face-attribute 'default nil :family "Ricty" :height 105)
+  (set-face-attribute 'default nil :family "Ricty" :height 160)
   (set-fontset-font (frame-parameter nil 'font) 'japanese-jisx0208 (cons "Ricty" "iso10646-1"))
   (set-fontset-font (frame-parameter nil 'font) 'japanese-jisx0212 (cons "Ricty" "iso10646-1"))
   (set-fontset-font (frame-parameter nil 'font) 'katakana-jisx0201 (cons "Ricty" "iso10646-1"))
@@ -17,7 +17,7 @@
   (set-face-background 'mode-line-buffer-id nil)
 
   (setq initial-frame-alist
-	(append '((width . 120) (height . 66)) initial-frame-alist))
+	(append '((width . 100) (height . 57)) initial-frame-alist))
   )
 
 (menu-bar-mode -1)
@@ -31,10 +31,12 @@
 (column-number-mode t)
 (setq confirm-kill-emacs 'y-or-n-p)
 (setq-default cursor-in-non-selected-windows nil)
+(setq visible-bell t)
+(setq calendar-week-start-day 1)
 
 (require 'server)
 (unless (server-running-p)
-  (server-start))
+(server-start))
 
 (setq vc-follow-symlinks t)
 
@@ -270,43 +272,19 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; org-mode
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(require 'org-install)
-(setq org-startup-truncated nil)
-(setq org-return-follows-link t)
-(add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
-;(org-remember-insinuate)
-(setq org-directory "~/Dropbox/memo/")
-(setq org-default-notes-file (concat org-directory "windriver.org"))
-(setq org-reverse-note-order t)
-
-(setq org-capture-templates
-      '(("t" "Todo" entry (file+headline nil "Inbox")     "* TODO %?\n %U\n %i" :prepend t)
-	("n" "Note" entry (file+headline nil "Inbox")     "* %?\n %U\n %i" :prepend t)
-	))
-
-(setq org-todo-keywords
-      '((sequence "TODO" "OPEN" "|" "DONE" "CLOSED")))
-
-(setq org-agenda-files (list org-directory)) ;agendaを使うため
-;; ショートカットキー
 (global-set-key "\C-cl" 'org-store-link)
 (global-set-key "\C-cc" 'org-capture)
 (global-set-key "\C-ca" 'org-agenda)
 (global-set-key "\C-cb" 'org-iswitchb)
 
-(add-hook 'org-mode-hook 'turn-on-font-lock)
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(org-agenda-files (quote ("~/Dropbox/memo/windriver.org"))))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
+(setq org-startup-truncated nil)
+(setq org-reverse-note-order t)
+(setq org-agenda-files '("~/Dropbox/org/"))
+
+(setq org-todo-keywords
+      '((sequence "TODO(t)" "WAITING(w)" "|" "DONE(d)" "CANCELED(c)" "DEFERRED(f)")
+	(sequence "OPEN(o)" "|" "CLOSED(l)")
+	))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; aspell
