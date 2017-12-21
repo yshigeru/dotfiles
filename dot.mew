@@ -253,3 +253,15 @@
 		("^Thread-Index" nil)
 		)
 	      mew-field-spec))
+
+(setq mew-draft-mode-newdraft-hook 'mew-draft-insert-signature)
+(setq mew-signature-insert-last t)
+
+(condition-case nil
+    (require 'mew-w3m)
+  (file-error nil))
+
+(setq mew-prog-msword-ext "soffice")
+(setq mew-prog-msexcel-ext "soffice")
+(setq mew-prog-mspowerpoint-ext "soffice")
+(setq mew-prog-pdf "evince")
