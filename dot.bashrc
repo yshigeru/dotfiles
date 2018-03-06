@@ -10,6 +10,9 @@ PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND$'\n'}history -a; history -c; h
 
 HISTSIZE=1000000
 
+shopt -s globstar
+shopt -s checkwinsize
+
 export EDITOR=vi
 export PAGER=less
 export TERM=screen-256color
@@ -25,12 +28,11 @@ alias fgrep='fgrep --color=auto'
 alias e='emacsclient -n'
 alias p='pwd | sed "s,^$HOME,~,"'
 
-f()
-{
-    find "$1" -name "$2"
-}
-
-ggrep()
-{
-    find "$2" -name "$3" -exec grep --color=auto "$1" {} /dev/null \;
-}
+# enable bash completion in interactive shells
+if ! shopt -oq posix; then
+    if [ -f /usr/share/bash-completion/bash_completion ]; then
+	. /usr/share/bash-completion/bash_completion
+    elif [ -f /etc/bash_completion ]; then
+	. /etc/bash_completion
+    fi
+fi
