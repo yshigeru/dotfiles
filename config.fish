@@ -1,38 +1,45 @@
 function fish_prompt
 	if [ $status -eq 0 ]
-		set_color -o cyan
+		set_color -o green
 	else
 		set_color -o red
 	end
 	
-	echo -n "$USER@"(hostname)" > "
+	echo -n "$USER@"(hostname)"> "
 	set_color normal
 end
 
 function fish_right_prompt
-	set_color -o green
-
-	if [ "$PWD" != "HOME" ]
-		echo (echo $PWD | sed "s|^$HOME|~|")
+	if [ $status -eq 0 ]
+		set_color -o green
 	else
-		echo "~"
+		set_color -o red
 	end
 
+	set prompt (echo $PWD | sed "s|^$HOME|~|")
+	set len (expr length $prompt)
+	set width (tput cols)
+	set half_width (expr $width / 2)
+
+	if [ $len -gt $half_width ]
+		set start (expr $len - $half_width)
+		set prompt (expr substr $prompt $start $len | sed 's|^...|...|')
+	end
+
+	echo $prompt
 	set_color normal
 end
 
 function fish_title; end
 
-function devshell
-	bash -c ". $argv[1] && exec $SHELL"
-end
-
 alias j "jobs"
 alias h "history"
 alias ls "ls --color"
-alias ll "ls -l"
+alias ll "ls -lh"
 alias la "ls -a"
-alias ec "emacsclient -n"
+alias e "emacsclient -n"
+
+set fish_greeting
 
 set -x EDITOR vi
 set -x PAGER less
