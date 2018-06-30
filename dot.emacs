@@ -4,21 +4,33 @@
 ;; general settings
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (when window-system
-  (set-face-attribute 'default nil :family "Ricty" :height 160)
-  (set-fontset-font (frame-parameter nil 'font) 'japanese-jisx0208 (cons "Ricty" "iso10646-1"))
-  (set-fontset-font (frame-parameter nil 'font) 'japanese-jisx0212 (cons "Ricty" "iso10646-1"))
-  (set-fontset-font (frame-parameter nil 'font) 'katakana-jisx0201 (cons "Ricty" "iso10646-1"))
+  (let ((font-height (if (equal (system-name) "x1carbon") 160 105))
+	(frame-height (if (equal (system-name) "x1carbon") 57 60))
+	(frame-width 100))
+    (set-face-attribute 'default nil
+			:family "Ricty diminished"
+			:height font-height)
 
-  (load-theme 'manoj-dark t)
+    (set-fontset-font (frame-parameter nil 'font)
+		      'japanese-jisx0208
+		      (cons "Ricty diminished" "iso10646-1"))
+    (set-fontset-font (frame-parameter nil 'font)
+		      'japanese-jisx0212
+		      (cons "Ricty diminished" "iso10646-1"))
+    (set-fontset-font (frame-parameter nil 'font)
+		      'katakana-jisx0201
+		      (cons "Ricty diminished" "iso10646-1"))
 
-  (set-face-attribute 'mode-line          nil :box nil)
-  (set-face-attribute 'mode-line-inactive nil :box nil)
-  (set-face-foreground 'mode-line-buffer-id nil)
-  (set-face-background 'mode-line-buffer-id nil)
+    (load-theme 'manoj-dark t)
 
-  (setq initial-frame-alist
-	(append '((width . 100) (height . 57)) initial-frame-alist))
-  )
+    (set-face-attribute 'mode-line          nil :box nil)
+    (set-face-attribute 'mode-line-inactive nil :box nil)
+    (set-face-foreground 'mode-line-buffer-id nil)
+    (set-face-background 'mode-line-buffer-id nil)
+
+    (setq initial-frame-alist
+	  (append `((width . ,frame-width) (height . ,frame-height)) initial-frame-alist))
+    ))
 
 (menu-bar-mode -1)
 (tool-bar-mode -1)
