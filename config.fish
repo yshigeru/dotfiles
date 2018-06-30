@@ -1,3 +1,8 @@
+function history-merge --on-event fish_preexec
+	history --save
+	history --merge
+end
+
 function fish_prompt
 	if [ $status -eq 0 ]
 		set_color -o green
