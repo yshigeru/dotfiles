@@ -1,7 +1,9 @@
 # -*- shell-script -*-
 # Set up the prompt
-PROMPT='%(?.%K{blue}.%K{red})%n@%m%k %F{white}%# %b%f%k'
-RPROMPT='%B%F{green}%53<...<%~%}'
+#PROMPT='%(?.%K{blue}.%K{red})%n@%m%k %F{white}%# %b%f%k'
+#RPROMPT='%B%F{green}%53<...<%~%}'
+PROMPT='%(?.%B%F{green}.%B%F{red})%n@%m%k %# %F{white}%b%f%k'
+RPROMPT='%(?.%B%F{green}.%B%F{red})%53<...<%~%}'
 
 setopt histignorealldups sharehistory
 
