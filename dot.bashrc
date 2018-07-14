@@ -1,5 +1,5 @@
 # -*- shell-script -*-
-PS1="\`if [ \$? = 0 ]; then echo '\[\e[0;44m\]'; else echo '\[\e[0;41m\]'; fi\`\h \\$\[\e[0m\] "
+PS1="\`if [ \$? = 0 ]; then echo '\[\e[1;32m\]'; else echo '\[\e[1;31m\]'; fi\`\u@\h \\$\[\e[0m\] "
 
 # Avoid duplicates
 HISTCONTROL=ignoredups:erasedups  
