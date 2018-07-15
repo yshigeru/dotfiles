@@ -1,5 +1,40 @@
 # -*- shell-script -*-
-PS1="\`if [ \$? = 0 ]; then echo '\[\e[1;32m\]'; else echo '\[\e[1;31m\]'; fi\`\u@\h \\$\[\e[0m\] "
+right_prompt()
+{
+    local prompt len half_columns start
+
+    tput sc
+    prompt=`pwd | sed "s|^$HOME|~|"`
+
+    len=${#prompt}
+    half_columns=$((COLUMNS / 2))
+
+    if [ $len -gt $half_columns ]; then
+	start=$((len - half_columns + 3))
+	prompt="...${prompt:start:len}"
+    fi
+
+    printf '%*s' $COLUMNS $prompt
+    tput rc
+}
+
+set_prompt_color()
+{
+    if [ $? -eq 0 ]; then
+	tput setaf 2		# green for command success
+    else
+	tput setaf 1		# red for command failure
+    fi
+
+    tput bold
+}
+
+reset_prompt_color()
+{
+    tput sgr0
+}
+
+PS1='\[$(set_prompt_color; right_prompt)\]\u@\h \\$ \[$(reset_prompt_color)\]'
 
 # Avoid duplicates
 HISTCONTROL=ignoredups:erasedups  
@@ -26,7 +61,6 @@ alias grep='grep --color=auto'
 alias egrep='egrep --color=auto'
 alias fgrep='fgrep --color=auto'
 alias e='emacsclient -n'
-alias p='pwd | sed "s,^$HOME,~,"'
 
 # enable bash completion in interactive shells
 if ! shopt -oq posix; then
