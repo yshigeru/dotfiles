@@ -35,14 +35,14 @@ reset_prompt_color()
 
 prompt_command()
 {
+    set_prompt_color
+    right_prompt
+    reset_prompt_color
+
     # After each command, append to the history file and reread it
     history -a
     history -c
     history -r
-
-    set_prompt_color
-    right_prompt
-    reset_prompt_color
 }
 
 PS1='\[$(set_prompt_color)\]\u@\h \\$ \[$(reset_prompt_color)\]'
