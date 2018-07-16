@@ -222,6 +222,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (require 'mozc)
 (setq default-input-method "japanese-mozc")
+(defadvice toggle-input-method (after my-toggle-input-method activate)
+  (key-chord-mode 1))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; elscreen
@@ -294,3 +296,45 @@
 (viewer-aggressive-setup t)			 ;全てのファイルをview-modeで開く
 (setq viewer-modeline-color-unwritable "tomato") ;書き込み禁止ファイルの色
 (setq viewer-modeline-color-view "orange")	 ;view-modeのファイルの色
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; term-mode
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(require 'multi-term)
+(global-set-key (kbd "C-x t")
+		'(lambda ()
+		   (interactive)
+		   (multi-term)))
+
+(custom-set-faces
+ '(term-color-black ((t (:foreground "#3F3F3F" :background "#2B2B2B"))))
+ '(term-color-red ((t (:foreground "#AC7373" :background "#8C5353"))))
+ '(term-color-green ((t (:foreground "#7F9F7F" :background "#9FC59F"))))
+ '(term-color-yellow ((t (:foreground "#DFAF8F" :background "#9FC59F"))))
+ '(term-color-blue ((t (:foreground "#7CB8BB" :background "#4C7073"))))
+ '(term-color-magenta ((t (:foreground "#DC8CC3" :background "#CC9393"))))
+ '(term-color-cyan ((t (:foreground "#93E0E3" :background "#8CD0D3"))))
+ '(term-color-white ((t (:foreground "#DCDCCC" :background "#656555"))))
+ '(term-default-fg-color ((t (:inherit term-color-white))))
+ '(term-default-bg-color ((t (:inherit term-color-black))))
+ )
+
+(add-hook 'term-mode-hook
+	  '(lambda ()
+	     (key-chord-define term-raw-map "jk"
+			       '(lambda ()
+				  (interactive)
+				  (message "line mode")
+				  (term-line-mode)
+				  (hl-line-mode 1)))
+	     (key-chord-define term-mode-map "jk"
+			       '(lambda ()
+				  (interactive)
+				  (message "char mode")
+				  (term-char-mode)
+				  (hl-line-mode 0)))
+	     (define-key term-raw-map (kbd "C-h") 'term-send-backspace)
+	     (define-key term-raw-map (kbd "C-y") 'term-paste)
+	     (define-key term-raw-map (kbd "ESC") 'term-send-raw)
+	     (define-key term-raw-map (kbd "C-z") 'term-send-raw)
+	     ))
