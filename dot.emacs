@@ -130,8 +130,6 @@
              (setq indent-tabs-mode t)
              ))
 
-(add-hook 'find-file-hook 'view-mode)
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; package.el
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -278,3 +276,21 @@
 	      (local-set-key (kbd "M-P") 'helm-gtags-parse-file)
 	      (local-set-key (kbd "M-,") 'helm-gtags-resume)
 	      ))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; key-chord
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(require 'key-chord)
+(setq key-chord-two-keys-delay 0.04)
+(key-chord-mode 1)
+(key-chord-define-global "jk" 'view-mode)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; viewer
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(require 'viewer)
+(viewer-stay-in-setup)
+(viewer-change-modeline-color-setup)
+(viewer-aggressive-setup t)			 ;全てのファイルをview-modeで開く
+(setq viewer-modeline-color-unwritable "tomato") ;書き込み禁止ファイルの色
+(setq viewer-modeline-color-view "orange")	 ;view-modeのファイルの色
