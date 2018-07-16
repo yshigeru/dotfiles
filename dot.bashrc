@@ -47,17 +47,14 @@ prompt_command()
 }
 
 PS1='\[$(set_prompt_color)\]\u@\h \\$ \[$(reset_prompt_color)\]'
-
-# Avoid duplicates
-HISTCONTROL=ignoredups:erasedups  
-# When the shell exits, append to the history file instead of overwriting it
-shopt -s histappend
-
 PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND$'\n'}prompt_command"
+
+HISTCONTROL=ignoredups:erasedups # Avoid duplicates
 HISTSIZE=1000000
 
 shopt -s globstar
 shopt -s checkwinsize
+shopt -s histappend # When the shell exits, append to the history file instead of overwriting it
 
 export EDITOR=vi
 export PAGER=less
