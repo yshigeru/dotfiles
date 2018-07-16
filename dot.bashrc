@@ -3,18 +3,19 @@ right_prompt()
 {
     local prompt len half_columns start
 
-    tput sc
     prompt=`pwd | sed "s|^$HOME|~|"`
-
     len=${#prompt}
     half_columns=$((COLUMNS / 2))
 
     if [ $len -gt $half_columns ]; then
 	start=$((len - half_columns + 3))
 	prompt="...${prompt:start:len}"
+	len=${#prompt}
     fi
 
-    printf '%*s' $COLUMNS $prompt
+    tput sc
+    tput hpa $((COLUMNS - len))
+    printf '%s' $prompt
     tput rc
 }
 
@@ -25,7 +26,6 @@ set_prompt_color()
     else
 	tput setaf 1		# red for command failure
     fi
-
     tput bold
 }
 
@@ -34,15 +34,26 @@ reset_prompt_color()
     tput sgr0
 }
 
-PS1='\[$(set_prompt_color; right_prompt)\]\u@\h \\$ \[$(reset_prompt_color)\]'
+prompt_command()
+{
+    # After each command, append to the history file and reread it
+    history -a
+    history -c
+    history -r
+
+    set_prompt_color
+    right_prompt
+    reset_prompt_color
+}
+
+PS1='\[$(set_prompt_color)\]\u@\h \\$ \[$(reset_prompt_color)\]'
 
 # Avoid duplicates
 HISTCONTROL=ignoredups:erasedups  
 # When the shell exits, append to the history file instead of overwriting it
 shopt -s histappend
-# After each command, append to the history file and reread it
-PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND$'\n'}history -a; history -c; history -r"
 
+PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND$'\n'}prompt_command"
 HISTSIZE=1000000
 
 shopt -s globstar
