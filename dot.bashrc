@@ -14,8 +14,7 @@ right_prompt()
     fi
 
     tput sc
-    tput hpa $((COLUMNS - len))
-    printf '%s' $prompt
+    printf '%*s' $COLUMNS $prompt
     tput rc
 }
 
