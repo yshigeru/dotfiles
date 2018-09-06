@@ -45,6 +45,7 @@ alias grep='grep --color=auto'
 alias egrep='egrep --color=auto'
 alias fgrep='fgrep --color=auto'
 alias e='emacsclient -n'
+alias p='pwd | sed "s,^$HOME,~,"'
 
 # enable bash completion in interactive shells
 if ! shopt -oq posix; then
