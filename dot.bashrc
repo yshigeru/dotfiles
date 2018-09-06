@@ -1,23 +1,4 @@
 # -*- shell-script -*-
-right_prompt()
-{
-    local prompt len half_columns start
-
-    prompt=`pwd | sed "s|^$HOME|~|"`
-    len=${#prompt}
-    half_columns=$((COLUMNS / 2))
-
-    if [ $len -gt $half_columns ]; then
-	start=$((len - half_columns + 3))
-	prompt="...${prompt:start:len}"
-	len=${#prompt}
-    fi
-
-    tput sc
-    printf '%*s' $COLUMNS $prompt
-    tput rc
-}
-
 set_prompt_color()
 {
     if [ $? -eq 0 ]; then
@@ -35,17 +16,13 @@ reset_prompt_color()
 
 prompt_command()
 {
-    set_prompt_color
-    right_prompt
-    reset_prompt_color
-
     # After each command, append to the history file and reread it
     history -a
     history -c
     history -r
 }
 
-PS1='\[$(set_prompt_color)\]\u@\h \\$ \[$(reset_prompt_color)\]'
+PS1='\[$(set_prompt_color)\]\h\\$ \[$(reset_prompt_color)\]'
 PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND$'\n'}prompt_command"
 
 HISTCONTROL=ignoredups:erasedups # Avoid duplicates
