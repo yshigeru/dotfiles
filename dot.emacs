@@ -148,6 +148,7 @@
 ;(custom-set-variables '(helm-ff-auto-update-initial-value nil))
 (define-key helm-map (kbd "C-h") 'delete-backward-char)
 (define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action)
+(global-set-key (kbd "M-x") 'helm-M-x)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; settings for cmigemo
