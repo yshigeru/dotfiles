@@ -251,6 +251,9 @@
 		("^IronPort-PHdr" nil)
 		("^Thread-Topic" nil)
 		("^Thread-Index" nil)
+		("^ARC-Seal" nil)
+		("^ARC-Message-Signature" nil)
+		("^ARC-Authentication-Results" nil)
 		)
 	      mew-field-spec))
 
