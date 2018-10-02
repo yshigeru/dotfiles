@@ -232,7 +232,7 @@
 (when window-system
   (require 'elscreen)
   (elscreen-start)
-  ;(setq elscreen-display-tab nil)
+  (setq elscreen-display-tab nil)
   (global-set-key "\C-zl" 'elscreen-toggle)
   (global-set-key [C-tab] 'elscreen-toggle)
   (copy-face 'mode-line 'elscreen-tab-current-screen-face)
