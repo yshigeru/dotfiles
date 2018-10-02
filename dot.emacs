@@ -148,6 +148,7 @@
 ;(custom-set-variables '(helm-ff-auto-update-initial-value nil))
 (define-key helm-map (kbd "C-h") 'delete-backward-char)
 (define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action)
+(global-set-key (kbd "M-x") 'helm-M-x)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; settings for cmigemo
@@ -233,6 +234,7 @@
   (elscreen-start)
   ;(setq elscreen-display-tab nil)
   (global-set-key "\C-zl" 'elscreen-toggle)
+  (global-set-key [C-tab] 'elscreen-toggle)
   (copy-face 'mode-line 'elscreen-tab-current-screen-face)
   (copy-face 'mode-line-inactive 'elscreen-tab-background-face)
   (copy-face 'mode-line-inactive 'elscreen-tab-control-face)
@@ -297,7 +299,8 @@
 (require 'viewer)
 (viewer-stay-in-setup)
 (viewer-change-modeline-color-setup)
-(viewer-aggressive-setup t)			 ;全てのファイルをview-modeで開く
+(setq view-mode-by-default-regexp ".*")
+(viewer-aggressive-setup 'force)		 ;全てのファイルをview-modeで開く
 (setq viewer-modeline-color-unwritable "tomato") ;書き込み禁止ファイルの色
 (setq viewer-modeline-color-view "orange")	 ;view-modeのファイルの色
 
