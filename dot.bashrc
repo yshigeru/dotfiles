@@ -22,7 +22,9 @@ prompt_command()
     history -r
 }
 
-PS1='\[$(set_prompt_color)\]\h\\$ \[$(reset_prompt_color)\]'
+#PROMPT_DIRTRIM=2
+#PS1='\[$(set_prompt_color)\]\h:\w\\$ \[$(reset_prompt_color)\]'
+PS1='\[$(set_prompt_color)\]\h:$(echo "\w" | sed -e "/^.\{30,\}/s/^.*\(.\{28\}\)/..\1/")\\$ \[$(reset_prompt_color)\]'
 PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND$'\n'}prompt_command"
 
 HISTCONTROL=ignoredups:erasedups # Avoid duplicates
