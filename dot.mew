@@ -150,28 +150,14 @@
 
 (setq mew-refile-guess-alist
       '(("To:"
-	 ("linux-kernel@vger.kernel.org"	"%LKML")
-	 ("oki-ppc-support@miraclelinux.com"	"%沖/MPC8548")
-	 ("oki-p2020-support@miraclelinux.com"	"%沖/P2020")
-	 ("dev-oki-ppc@miraclelinux.com"	"%沖/P2020")
-	 ("dev-oki-ppc@miraclelinux.com"	"%沖/MPC8548")
-	 ("dev-oki-cgl@miraclelinux.com"	"%沖/CGL")
-	 ("oki-cgl-support@miraclelinux.com"	"%沖/CGL")
-	 ("nec-atc-support@miraclelinux.com"	"%NEC/航空管制")
-	 ("nec-ft-tech@miraclelinux.com"	"%NEC/FT")
+	 ("linux-riscv@lists\\.infradead\\.org"	"%linux-riscv")
+	 ;("linux-kernel@vger.kernel.org"	"%LKML")
 	 )
 	("Cc:"
-	 ("linux-kernel@vger.kernel.org"	"%LKML")
-	 ("oki-ppc-support@miraclelinux.com"	"%沖/MPC8548")
-	 ("oki-p2020-support@miraclelinux.com"	"%沖/P2020")
-	 ("dev-oki-ppc@miraclelinux.com"	"%沖/P2020")
-	 ("dev-oki-ppc@miraclelinux.com"	"%沖/MPC8548")
-	 ("dev-oki-cgl@miraclelinux.com"	"%沖/CGL")
-	 ("oki-cgl-support@miraclelinux.com"	"%沖/CGL")
-	 ("nec-atc-support@miraclelinux.com"	"%NEC/航空管制")
-	 ("nec-ft-tech@miraclelinux.com"	"%NEC/FT")
+	 ("linux-riscv@lists\\.infradead\\.org"	"%linux-riscv")
+	 ;("linux-kernel@vger.kernel.org"	"%LKML")
 	 )
-	(t "%[Gmail]/すべてのメール")
+	;(t "%[Gmail]/すべてのメール")
 	))
 
 (defadvice mew-input-folder-search-forward-1
@@ -182,20 +168,23 @@
   (let ((migemo-do-isearch t))
     ad-do-it))
 
-(defvar mew-refile-guess-control
-  '(mew-refile-ctrl-auto-boundary
-    mew-refile-guess-by-alist
-    mew-refile-ctrl-throw
-    mew-refile-guess-by-newsgroups
-    mew-refile-guess-by-folder
-    mew-refile-ctrl-throw
-    mew-refile-guess-by-thread
-    mew-refile-ctrl-throw
-    mew-refile-guess-by-from-folder
-    mew-refile-ctrl-throw
-    mew-refile-guess-by-from
-    mew-refile-ctrl-throw
-    mew-refile-guess-by-default))
+(setq mew-refile-guess-control
+      '(mew-refile-guess-by-alist
+	mew-refile-ctrl-auto-boundary
+	mew-refile-ctrl-throw
+	mew-refile-guess-by-newsgroups
+	mew-refile-guess-by-folder
+	mew-refile-ctrl-throw
+	mew-refile-guess-by-thread
+	mew-refile-ctrl-throw
+	mew-refile-guess-by-from-folder
+	mew-refile-ctrl-throw
+	mew-refile-guess-by-from
+	mew-refile-ctrl-throw
+	mew-refile-guess-by-default
+	))
+
+(setq mew-header-reasonable-size 100000)
 
 ;; 引用する際のヘッダ
 (setq mew-cite-strings-function
