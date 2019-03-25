@@ -233,7 +233,11 @@
 (when window-system
   (require 'elscreen)
   (elscreen-start)
-  (setq elscreen-display-tab nil)
+  (setq elscreen-display-tab t)
+  ;; タブの先頭に[X]を表示しない
+  (setq elscreen-tab-display-kill-screen nil)
+  ;; header-lineの先頭に[<->]を表示しない
+  (setq elscreen-tab-display-control nil)
   (global-set-key "\C-zl" 'elscreen-toggle)
   (global-set-key [C-tab] 'elscreen-toggle)
   (copy-face 'mode-line 'elscreen-tab-current-screen-face)
