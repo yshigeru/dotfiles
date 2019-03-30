@@ -276,6 +276,7 @@
 (require 'helm-config)
 (require 'helm-gtags)
 (add-hook 'c-mode-hook 'helm-gtags-mode)
+(add-hook 'asm-mode-hook 'helm-gtags-mode)
 
 ;; key bindings
 (add-hook 'helm-gtags-mode-hook
@@ -361,3 +362,10 @@
 ;; python-mode
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (setq python-shell-interpreter "python3")
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; flycheck
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(require 'flycheck)
+(add-hook 'c-mode-hook 'flycheck-mode)
+(add-hook 'python-mode-hook 'flycheck-mode)
