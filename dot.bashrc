@@ -46,8 +46,22 @@ alias la='ls -a'
 alias grep='grep --color=auto'
 alias egrep='egrep --color=auto'
 alias fgrep='fgrep --color=auto'
-alias e='emacsclient -n'
+#alias e='emacsclient -n'
+alias e='emacsclient -t -a ""'
+alias mew='emacsclient -e "(mew)" -t -a ""'
+alias start-emacs='emacs --daemon'
+alias kill-emacs='emacsclient -e "(kill-emacs)"'
 alias p='pwd | sed "s,^$HOME,~,"'
+
+google-drive()
+{
+    if [ "$1" != "-u" ]; then
+	rclone mount --daemon --vfs-cache-mode full --write-back-cache --buffer-size 128M gdrive:GoogleDrive ~/GoogleDrive
+    else
+	pkill -KILL rclone
+	fusermount -u ~/GoogleDrive
+    fi
+}
 
 # enable bash completion in interactive shells
 if ! shopt -oq posix; then
