@@ -304,6 +304,7 @@
 (viewer-change-modeline-color-setup)
 (setq view-mode-by-default-regexp ".*")
 (viewer-aggressive-setup 'force)		 ;全てのファイルをview-modeで開く
+(setq viewer-modeline-color-default "gray75")
 (setq viewer-modeline-color-unwritable "tomato") ;書き込み禁止ファイルの色
 (setq viewer-modeline-color-view "orange")	 ;view-modeのファイルの色
 
