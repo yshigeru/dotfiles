@@ -18,14 +18,14 @@
       mew-inbox-action-alist
       '(("X-Spam-Flag:" mew-spam-assassin-or-bsfilter))
       ;; Register password briefly
-      mew-use-cached-passwd t
+      ;;mew-use-cached-passwd t
+      mew-use-master-passwd t
       ;; Does not bring mail at booting time
       mew-auto-get nil
       ;; For Biff
       mew-use-biff t
-      mew-use-biff-bell t  ; use alarm
-      mew-biff-interval 10 ; minute
-      mew-biff-function 'my/biff-function
+      mew-use-biff-bell nil  ; use alarm
+      mew-biff-interval 5 ; minute
       ;mew-summary-form '(type (5 date) " " (25 from) " " t (45 subj))
       mew-summary-form '(type (5 date) " " (25 from) " " t (-1 subj))
       mew-imap-size 0
