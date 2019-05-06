@@ -54,9 +54,6 @@
 
 (require 'magit)
 
-(setq custom-file "~/.emacs.d/custom.el")
-(load custom-file)
-
 ;; ブックマークを変更したら即保存する
 (setq bookmark-save-flag 1)
 
