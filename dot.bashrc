@@ -1,10 +1,11 @@
 # -*- shell-script -*-
+
 set_prompt_color()
 {
     if [ $? -eq 0 ]; then
-	tput setaf 2		# green for command success
+        tput setaf 2		# green for command success
     else
-	tput setaf 1		# red for command failure
+        tput setaf 1		# red for command failure
     fi
     tput bold
 }
@@ -24,7 +25,7 @@ prompt_command()
 
 #PROMPT_DIRTRIM=2
 #PS1='\[$(set_prompt_color)\]\h:\w\\$ \[$(reset_prompt_color)\]'
-PS1='\[$(set_prompt_color)\]\h:$(echo "\w" | sed -e "/^.\{30,\}/s/^.*\(.\{28\}\)/..\1/")\\$ \[$(reset_prompt_color)\]'
+PS1='\[$(set_prompt_color)\]\h:$(echo "\w" | sed -e "/^.\{30,\}/s/^.*\(.\{28\}\)/..\1/") \\$ \[$(reset_prompt_color)\]'
 PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND$'\n'}prompt_command"
 
 HISTCONTROL=ignoredups:erasedups # Avoid duplicates
@@ -46,12 +47,53 @@ alias la='ls -a'
 alias grep='grep --color=auto'
 alias egrep='egrep --color=auto'
 alias fgrep='fgrep --color=auto'
-#alias e='emacsclient -n'
-alias e='with_tmux_rename_window e emacsclient -t -a ""'
-alias mew='with_tmux_rename_window mew emacsclient -e "(mew)" -t -a ""'
-alias start-emacs='emacs --daemon'
-alias kill-emacs='emacsclient -e "(kill-emacs)"'
+alias e='emacsclient -n'
+# alias e='with_tmux_rename_window e emacsclient -t -a ""'
+# alias mew='with_tmux_rename_window mew emacsclient -e "(mew)" -t -a ""'
+# alias start-emacs='emacs --daemon'
+# alias kill-emacs='emacsclient -e "(kill-emacs)"'
 alias p='pwd | sed "s,^$HOME,~,"'
+alias pd=peco-dirs-cd
+alias fd=peco-find-cd
+alias pk=peco-pkill
+
+cd()
+{
+    if [ -z "$1" ] ; then
+        test "$PWD" != "$HOME" && pushd $HOME > /dev/null
+	return 0
+    elif ( echo "$1" | egrep "^\.\.\.+$" > /dev/null ) ; then
+        cd $( echo "$1" | perl -ne 'print "../" x ( tr/\./\./ - 1 )' )
+    else
+        pushd "$1" > /dev/null
+    fi
+}
+
+peco-dirs-cd()
+{
+    local newdir=$( dirs -v | sort -k 2 | uniq -f 1 | sort -n -k 1 | awk '{ print $2 }' | peco )
+    if [ "$newdir" != "" ]; then
+	cd $( echo $newdir | sed -e "s;^~;$HOME;" )
+    fi
+}
+
+peco-find-cd()
+{
+    local newdir=$( find . -type d | peco )
+    if [ "$newdir" != "" ]; then
+	cd $newdir
+    fi
+}
+
+peco-pkill()
+{
+    local pid
+
+    for pid in $( ps aux | peco | awk '{ print $2 }' ); do
+	kill $pid
+	echo "Killed ${pid}"
+    done
+}
 
 with_tmux_rename_window()
 {
@@ -67,16 +109,6 @@ with_tmux_rename_window()
 	tmux rename-window $old_win_name
     else
 	command "$@"
-    fi
-}
-
-google-drive()
-{
-    if [ "$1" != "-u" ]; then
-	rclone mount --daemon --vfs-cache-mode full --write-back-cache --buffer-size 128M gdrive:GoogleDrive ~/GoogleDrive
-    else
-	pkill -KILL rclone
-	fusermount -u ~/GoogleDrive
     fi
 }
 
