@@ -2,7 +2,7 @@
 # Set up the prompt
 #PROMPT='%(?.%K{blue}.%K{red})%n@%m%k %F{white}%# %b%f%k'
 #RPROMPT='%B%F{green}%53<...<%~%}'
-PROMPT='%(?.%B%F{green}.%B%F{red})%n@%m%k %# %F{white}%b%f%k'
+PROMPT='%(?.%B%F{green}.%B%F{red})%m%k %# %F{white}%b%f%k'
 RPROMPT='%(?.%B%F{green}.%B%F{red})%53<...<%~%}'
 
 setopt histignorealldups sharehistory
@@ -16,6 +16,14 @@ SAVEHIST=1000000
 HISTFILE=~/.zsh_history
 setopt hist_ignore_dups
 setopt share_history
+
+# Use directory stack
+DIRSTACKSIZE=100
+setopt AUTO_PUSHD
+autoload -Uz compinit && compinit
+zstyle ':completion:*' menu select
+zstyle ':completion:*:cd:*' ignore-parents parent pwd
+zstyle ':completion:*:descriptions' format '%BCompleting%b %U%d%u'
 
 # Use modern completion system
 autoload -Uz compinit
