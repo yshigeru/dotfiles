@@ -60,8 +60,68 @@ alias la='ls -a'
 alias grep='grep --color=auto'
 alias egrep='egrep --color=auto'
 alias fgrep='fgrep --color=auto'
-alias e='emacsclient -n'
+# alias e='emacsclient -n'
+alias e='with_tmux_rename_window e emacsclient -t -a ""'
+alias mew='with_tmux_rename_window mew emacsclient -e "(mew)" -t -a ""'
+alias start-emacs='emacs --daemon'
+alias kill-emacs='emacsclient -e "(kill-emacs)"'
+alias p='pwd | sed "s,^$HOME,~,"'
+# alias pd=peco-dirs-cd
+# alias fd=peco-find-cd
+# alias pk=peco-pkill
 
 EDITOR=vi
 PAGER=less
 TERM=screen-256color
+
+with_tmux_rename_window()
+{
+    local win_name=$1
+    shift
+
+    if [ "$TMUX" != "" ]; then
+	local old_win_name=`tmux display-message -p '#W'`
+
+	tmux rename-window $win_name
+	command "$@"
+	tmux set-window-option automatic-rename "on" 1>/dev/null
+	tmux rename-window $old_win_name
+    else
+	command "$@"
+    fi
+}
+
+peco-history-selection() {
+    BUFFER=`history -n 1 | tac  | awk '!a[$0]++' | peco`
+    CURSOR=$#BUFFER
+    zle reset-prompt
+}
+
+zle -N peco-history-selection
+bindkey '^R' peco-history-selection
+
+# cdr
+if [[ -n $(echo ${^fpath}/chpwd_recent_dirs(N)) && -n $(echo ${^fpath}/cdr(N)) ]]; then
+    autoload -Uz chpwd_recent_dirs cdr add-zsh-hook
+    add-zsh-hook chpwd chpwd_recent_dirs
+    zstyle ':completion:*' recent-dirs-insert both
+    zstyle ':chpwd:*' recent-dirs-default true
+    zstyle ':chpwd:*' recent-dirs-max 1000
+    zstyle ':chpwd:*' recent-dirs-file "$HOME/.cache/chpwd-recent-dirs"
+fi
+
+function peco-cdr () {
+    local selected_dir="$(cdr -l | sed 's/^[0-9]\+ \+//' | peco --prompt="cdr >" --query "$LBUFFER")"
+    if [ -n "$selected_dir" ]; then
+        BUFFER="cd ${selected_dir}"
+        zle accept-line
+    fi
+}
+
+zle -N peco-cdr
+bindkey '^W' peco-cdr
+
+# Start Dropbox
+if [ -e /usr/bin/dropbox ] && dropbox running; then
+    daemon dropbox start
+fi
