@@ -3,35 +3,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; general settings
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(when window-system
-  (let ((font-height (if (equal (system-name) "x1carbon") 160 105))
-	(frame-height (if (equal (system-name) "x1carbon") 57 60))
-	(frame-width 100))
-    (set-face-attribute 'default nil
-			:family "Ricty diminished"
-			:height font-height)
-
-    (set-fontset-font (frame-parameter nil 'font)
-		      'japanese-jisx0208
-		      (cons "Ricty diminished" "iso10646-1"))
-    (set-fontset-font (frame-parameter nil 'font)
-		      'japanese-jisx0212
-		      (cons "Ricty diminished" "iso10646-1"))
-    (set-fontset-font (frame-parameter nil 'font)
-		      'katakana-jisx0201
-		      (cons "Ricty diminished" "iso10646-1"))
-
-    (load-theme 'manoj-dark t)
-
-    (set-face-attribute 'mode-line          nil :box nil)
-    (set-face-attribute 'mode-line-inactive nil :box nil)
-    (set-face-foreground 'mode-line-buffer-id nil)
-    (set-face-background 'mode-line-buffer-id nil)
-
-    (setq initial-frame-alist
-	  (append `((width . ,frame-width) (height . ,frame-height)) initial-frame-alist))
-    ))
-
+(package-initialize)
 (menu-bar-mode -1)
 (tool-bar-mode -1)
 (scroll-bar-mode -1)
@@ -45,26 +17,8 @@
 (setq-default cursor-in-non-selected-windows nil)
 (setq visible-bell t)
 (setq calendar-week-start-day 1)
-
-(require 'server)
-(unless (server-running-p)
-(server-start))
-
 (setq vc-follow-symlinks t)
-
-(require 'magit)
-
-;; ブックマークを変更したら即保存する
-(setq bookmark-save-flag 1)
-
-;; 超整理法
-(progn
-  (setq bookmark-sort-flag nil)
-  (defun bookmark-arrange-latest-top ()
-    (let ((latest ( bookmark-get-bookmark bookmark)))
-      (setq bookmark-alist (cons latest (delq latest bookmark-aliset))))
-    (bookmark-save))
-  (add-hook 'bookmark-after-jump-hook 'bookmark-arrange-latest-top))
+(setq auto-revert-check-vc-info t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; key bindings
@@ -77,7 +31,85 @@
 (global-set-key "\M-\C-s" 'helm-swoop)
 (global-set-key "\C-t" 'pop-tag-mark)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; visual settings for X11
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(when window-system
+  (set-face-attribute 'default nil
+		      :family "Ricty diminished"
+		      :height (if (equal (system-name) "x1carbon") 120 105))
+  (set-fontset-font (frame-parameter nil 'font)
+		    'japanese-jisx0208
+		    (cons "Ricty diminished" "iso10646-1"))
+  (set-fontset-font (frame-parameter nil 'font)
+		    'japanese-jisx0212
+		    (cons "Ricty diminished" "iso10646-1"))
+  (set-fontset-font (frame-parameter nil 'font)
+		    'katakana-jisx0201
+		    (cons "Ricty diminished" "iso10646-1"))
+
+  (set-face-attribute 'mode-line          nil :box nil)
+  (set-face-attribute 'mode-line-inactive nil :box nil)
+  (set-face-foreground 'mode-line-buffer-id nil)
+  (set-face-background 'mode-line-buffer-id nil)
+  )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; color theme settings
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(load-theme 'wombat t)
+
+(when (not window-system)
+  (defun on-frame-open (&optional frame)
+    "If the FRAME created in terminal don't load background color."
+    (unless (display-graphic-p frame)
+      (set-face-background 'default "unspecified-bg" frame)))
+  (add-hook 'after-make-frame-functions 'on-frame-open)
+  )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Emacs server
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(require 'server)
+(unless (server-running-p)
+  (server-start))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; magit
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(require 'magit)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; settings for cmigemo
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(when (and (executable-find "cmigemo")
+           (require 'migemo nil t))
+  (setq migemo-options '("-q" "--emacs"))
+  (setq migemo-user-dictionary nil)
+  (setq migemo-regex-dictionary nil)
+  (setq migemo-coding-system 'utf-8-unix)
+  (load-library "migemo")
+  (setq migemo-command "cmigemo")
+  (setq migemo-dictionary "/usr/share/cmigemo/utf-8/migemo-dict")
+  (migemo-init)
+  )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; bookmark
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(setq bookmark-save-flag 1)
+
+(progn
+  (setq bookmark-sort-flag nil)
+  (defun bookmark-arrange-latest-top ()
+    (let ((latest ( bookmark-get-bookmark bookmark)))
+      (setq bookmark-alist (cons latest (delq latest bookmark-aliset))))
+    (bookmark-save))
+  (add-hook 'bookmark-after-jump-hook 'bookmark-arrange-latest-top))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Linux C conding style
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defun c-lineup-arglist-tabs-only (ignored)
   "Line up argument lists by tabs, not spaces"
   (let* ((anchor (c-langelem-pos c-syntactic-element))
@@ -107,7 +139,9 @@
                 (setq indent-tabs-mode t)
                 (c-set-style "linux-tabs-only")))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; hooks
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (add-hook 'c-mode-common-hook
           '(lambda ()
 	     (c-set-style "linux")
@@ -127,41 +161,20 @@
              (setq indent-tabs-mode t)
              ))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; package.el
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(require 'package)
-(add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/") t) ;MELPA
-(add-to-list 'package-archives '("melpa-stable" . "http://stable.melpa.org/packages/") t) ;MELPA-stable
-(add-to-list 'package-archives  '("marmalade" . "http://marmalade-repo.org/packages/") t) ;Marmalade
-(add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/") t) ;Org
-(package-initialize)
+(add-hook 'find-file-hook
+	  '(lambda ()
+	     (if (file-exists-p buffer-file-name)
+		 (view-mode))
+	     ))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; helm
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (require 'helm-config)
 (helm-mode 1)
-;(custom-set-variables '(helm-ff-auto-update-initial-value nil))
 (define-key helm-map (kbd "C-h") 'delete-backward-char)
 (define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action)
 (global-set-key (kbd "M-x") 'helm-M-x)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; settings for cmigemo
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(when (and (executable-find "cmigemo")
-           (require 'migemo nil t))
-  (setq migemo-options '("-q" "--emacs"))
-
-  (setq migemo-user-dictionary nil)
-  (setq migemo-regex-dictionary nil)
-  (setq migemo-coding-system 'utf-8-unix)
-  (load-library "migemo")
-  (setq migemo-command "cmigemo")
-  (setq migemo-dictionary "/usr/share/cmigemo/utf-8/migemo-dict")
-  (migemo-init)
-  )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; settings for auto-complete
@@ -205,13 +218,6 @@
              ))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; settings for Gauche
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(setq scheme-program-name "gosh -i")
-(autoload 'scheme-mode "cmuscheme" "Major mode for Scheme." t)
-(autoload 'run-scheme "cmuscheme" "Run an inferior Scheme process." t)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; settings for Mew
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (require 'mew)
@@ -222,27 +228,23 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (require 'mozc)
 (setq default-input-method "japanese-mozc")
-(defadvice toggle-input-method (after my-toggle-input-method activate)
-  (key-chord-mode 1))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; elscreen
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; (when window-system
-;;   (require 'elscreen)
-;;   (elscreen-start)
-;;   (setq elscreen-display-tab t)
-;;   ;; タブの先頭に[X]を表示しない
-;;   (setq elscreen-tab-display-kill-screen nil)
-;;   ;; header-lineの先頭に[<->]を表示しない
-;;   (setq elscreen-tab-display-control nil)
-;;   (global-set-key "\C-zl" 'elscreen-toggle)
-;;   (global-set-key [C-tab] 'elscreen-toggle)
-;;   (copy-face 'mode-line 'elscreen-tab-current-screen-face)
-;;   (copy-face 'mode-line-inactive 'elscreen-tab-background-face)
-;;   (copy-face 'mode-line-inactive 'elscreen-tab-control-face)
-;;   (copy-face 'mode-line-inactive 'elscreen-tab-other-screen-face)
-;;   )
+(when window-system
+  (require 'elscreen)
+  (elscreen-start)
+  (setq elscreen-display-tab t)
+  (setq elscreen-tab-display-kill-screen nil) ;タブの先頭に[X]を表示しない
+  (setq elscreen-tab-display-control nil) ;header-lineの先頭に[<->]を表示しない
+  (global-set-key "\C-zl" 'elscreen-toggle)
+  (global-set-key [C-tab] 'elscreen-toggle)
+  (copy-face 'mode-line 'elscreen-tab-current-screen-face)
+  (copy-face 'mode-line-inactive 'elscreen-tab-background-face)
+  (copy-face 'mode-line-inactive 'elscreen-tab-control-face)
+  (copy-face 'mode-line-inactive 'elscreen-tab-other-screen-face)
+  )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; org-mode
@@ -269,93 +271,38 @@
   '(add-to-list 'ispell-skip-region-alist '("[^\000-\377]+")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; helm-gtags
+;; gtags
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(require 'helm-config)
-(require 'helm-gtags)
-(add-hook 'c-mode-hook 'helm-gtags-mode)
-(add-hook 'asm-mode-hook 'helm-gtags-mode)
+(require 'gtags)
 
-;; key bindings
-(add-hook 'helm-gtags-mode-hook
+(add-hook 'gtags-select-mode-hook
 	  '(lambda ()
-	      (local-set-key (kbd "M-.") 'helm-gtags-dwim)
-	      (local-set-key (kbd "M-*") 'helm-gtags-find-tag)
-	      (local-set-key (kbd "M-r") 'helm-gtags-find-rtag)
-	      (local-set-key (kbd "M-s") 'helm-gtags-find-symbol)
-	      (local-set-key (kbd "C-t") 'helm-gtags-pop-stack)
-	      (local-set-key (kbd "M-p") 'helm-gtags-find-pattern)
-	      (local-set-key (kbd "M-P") 'helm-gtags-parse-file)
-	      (local-set-key (kbd "M-,") 'helm-gtags-resume)
-	      ))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; key-chord
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(require 'key-chord)
-(setq key-chord-two-keys-delay 0.04)
-(key-chord-mode 1)
-(key-chord-define-global "jk" 'view-mode)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; viewer
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(require 'viewer)
-(viewer-stay-in-setup)
-(viewer-change-modeline-color-setup)
-(setq view-mode-by-default-regexp ".*")
-(viewer-aggressive-setup 'force)		 ;全てのファイルをview-modeで開く
-(setq viewer-modeline-color-default "gray75")
-(setq viewer-modeline-color-unwritable "tomato") ;書き込み禁止ファイルの色
-(setq viewer-modeline-color-view "orange")	 ;view-modeのファイルの色
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; term-mode
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(require 'multi-term)
-(global-set-key (kbd "C-x t")
-		'(lambda ()
-		   (interactive)
-		   (multi-term)))
-
-(custom-set-faces
- '(term-color-black ((t (:foreground "#3F3F3F" :background "#2B2B2B"))))
- '(term-color-red ((t (:foreground "#AC7373" :background "#8C5353"))))
- '(term-color-green ((t (:foreground "#7F9F7F" :background "#9FC59F"))))
- '(term-color-yellow ((t (:foreground "#DFAF8F" :background "#9FC59F"))))
- '(term-color-blue ((t (:foreground "#7CB8BB" :background "#4C7073"))))
- '(term-color-magenta ((t (:foreground "#DC8CC3" :background "#CC9393"))))
- '(term-color-cyan ((t (:foreground "#93E0E3" :background "#8CD0D3"))))
- '(term-color-white ((t (:foreground "#DCDCCC" :background "#656555"))))
- '(term-default-fg-color ((t (:inherit term-color-white))))
- '(term-default-bg-color ((t (:inherit term-color-black))))
- )
-
-(add-hook 'term-mode-hook
-	  '(lambda ()
-	     (key-chord-define term-raw-map "jk"
-			       '(lambda ()
-				  (interactive)
-				  (message "line mode")
-				  (term-line-mode)
-				  (hl-line-mode 1)))
-	     (key-chord-define term-mode-map "jk"
-			       '(lambda ()
-				  (interactive)
-				  (message "char mode")
-				  (term-char-mode)
-				  (hl-line-mode 0)))
-	     (define-key term-raw-map (kbd "C-h") 'term-send-backspace)
-	     (define-key term-raw-map (kbd "C-y") 'term-paste)
-	     (define-key term-raw-map (kbd "C-c ESC")
-	       '(lambda ()
-		  (interactive)
-		  (term-send-raw-string "\e")))
-	     (define-key term-raw-map (kbd "C-c C-z")
-	       '(lambda ()
-		  (interactive)
-		  (term-send-raw-string "\C-z")))
+	     (setq hl-line-face 'underline)
+	     (hl-line-mode 1)
 	     ))
+
+(add-hook 'c-mode-hook
+	  '(lambda ()
+	     (gtags-mode 1)))
+
+(add-hook 'asm-mode-hook
+	  '(lambda ()
+	     (gtags-mode 1)))
+
+(add-hook 'gtags-mode-hook
+	  '(lambda ()
+	     (local-set-key "\M-." 'gtags-find-tag)
+	     (local-set-key "\M-r" 'gtags-find-rtag)
+	     (local-set-key "\M-s" 'gtags-find-symbol)
+	     (local-set-key "\C-t" 'gtags-pop-stack)
+	     ))
+
+(setq gtags-auto-update t)
+
+;; disable helm in gtags functions
+(add-to-list 'helm-completing-read-handlers-alist '(gtags-find-tag . nil))
+(add-to-list 'helm-completing-read-handlers-alist '(gtags-find-rtag . nil))
+(add-to-list 'helm-completing-read-handlers-alist '(gtags-find-symbol . nil))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; python-mode
