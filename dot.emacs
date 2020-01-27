@@ -296,6 +296,7 @@
 	     (local-set-key "\M-r" 'gtags-find-rtag)
 	     (local-set-key "\M-s" 'gtags-find-symbol)
 	     (local-set-key "\C-t" 'gtags-pop-stack)
+	     (local-set-key "\M-," 'gtags-pop-stack)
 	     ))
 
 (setq gtags-auto-update t)
