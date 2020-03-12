@@ -73,7 +73,7 @@ alias p='pwd | sed "s,^$HOME,~,"'
 
 EDITOR=vi
 PAGER=less
-TERM=screen-256color
+TERM=xterm-256color
 
 peco-history-selection() {
     BUFFER=`history -n 1 | tac  | awk '!a[$0]++' | peco`

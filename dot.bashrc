@@ -37,7 +37,7 @@ shopt -s histappend # When the shell exits, append to the history file instead o
 
 export EDITOR=vi
 export PAGER=less
-export TERM=screen-256color
+export TERM=xterm-256color
 
 alias j=jobs
 alias h='history 20'
