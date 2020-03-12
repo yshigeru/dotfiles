@@ -109,3 +109,5 @@ bindkey '^W' peco-cdr
 if [ -e /usr/bin/dropbox ] && dropbox running; then
     daemon dropbox start
 fi
+
+umask 022
