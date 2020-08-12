@@ -27,6 +27,7 @@
 (setq calendar-week-start-day 1)
 (setq vc-follow-symlinks t)
 (setq auto-revert-check-vc-info t)
+(xclip-mode)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; key bindings
