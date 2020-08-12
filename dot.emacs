@@ -1,6 +1,14 @@
 ;; -*- emacs-lisp -*-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; package
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(require 'package)
+(add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/") t)
+(add-to-list 'package-archives '("melpa-stable" . "http://stable.melpa.org/packages/") t)
+(package-initialize)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; general settings
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (package-initialize)
@@ -26,10 +34,9 @@
 (global-set-key "\C-h" 'delete-backward-char)
 (global-set-key "\C-xl" 'goto-line)
 (global-set-key "\C-c\C-m" 'compile)
-(global-set-key "\C-xS" 'term+mux-new)
 (global-set-key "\C-x\C-o" 'find-file-other-window)
-(global-set-key "\M-\C-s" 'helm-swoop)
 (global-set-key "\C-t" 'pop-tag-mark)
+(global-set-key "\C-x\C-b" 'buffer-menu)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; visual settings for X11
@@ -37,7 +44,7 @@
 (when window-system
   (set-face-attribute 'default nil
 		      :family "Ricty diminished"
-		      :height (if (equal (system-name) "x1carbon") 120 105))
+		      :height (if (equal (system-name) "xps13") 140 105))
   (set-fontset-font (frame-parameter nil 'font)
 		    'japanese-jisx0208
 		    (cons "Ricty diminished" "iso10646-1"))
@@ -161,12 +168,6 @@
              (setq indent-tabs-mode t)
              ))
 
-(add-hook 'find-file-hook
-	  '(lambda ()
-	     (if (file-exists-p buffer-file-name)
-		 (view-mode))
-	     ))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; helm
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -269,6 +270,26 @@
 (setq-default ispell-program-name "aspell")
 (eval-after-load "ispell"
   '(add-to-list 'ispell-skip-region-alist '("[^\000-\377]+")))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; key-chord
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(require 'key-chord)
+(setq key-chord-two-keys-delay 0.04)
+(key-chord-mode 1)
+(key-chord-define-global "jk" 'view-mode)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; viewer
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(require 'viewer)
+(viewer-stay-in-setup)
+(viewer-change-modeline-color-setup)
+(setq view-mode-by-default-regexp ".*")
+(viewer-aggressive-setup 'force)      ;全てのファイルをview-modeで開く
+(setq viewer-modeline-color-default "gray30")
+(setq viewer-modeline-color-unwritable "red") ;書き込み禁止ファイルの色
+(setq viewer-modeline-color-view "DarkSlateBlue") ;view-modeのファイルの色
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; gtags
