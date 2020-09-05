@@ -27,7 +27,7 @@
 (setq calendar-week-start-day 1)
 (setq vc-follow-symlinks t)
 (setq auto-revert-check-vc-info t)
-(xclip-mode)
+;(xclip-mode)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; key bindings
@@ -45,7 +45,7 @@
 (when window-system
   (set-face-attribute 'default nil
 		      :family "Ricty diminished"
-		      :height (if (equal (system-name) "xps13") 140 105))
+		      :height (if (equal (system-name) "xps13") 160 105))
   (set-fontset-font (frame-parameter nil 'font)
 		    'japanese-jisx0208
 		    (cons "Ricty diminished" "iso10646-1"))
@@ -339,3 +339,51 @@
 (require 'flycheck)
 (add-hook 'c-mode-hook 'flycheck-mode)
 (add-hook 'python-mode-hook 'flycheck-mode)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; term-mode
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(require 'multi-term)
+(global-set-key (kbd "C-x t")
+		'(lambda ()
+                   (interactive)
+                   (multi-term)))
+
+(custom-set-faces
+ '(term-color-black ((t (:foreground "#3F3F3F" :background "#2B2B2B"))))
+ '(term-color-red ((t (:foreground "#AC7373" :background "#8C5353"))))
+ '(term-color-green ((t (:foreground "#7F9F7F" :background "#9FC59F"))))
+ '(term-color-yellow ((t (:foreground "#DFAF8F" :background "#9FC59F"))))
+ '(term-color-blue ((t (:foreground "#7CB8BB" :background "#4C7073"))))
+ '(term-color-magenta ((t (:foreground "#DC8CC3" :background "#CC9393"))))
+ '(term-color-cyan ((t (:foreground "#93E0E3" :background "#8CD0D3"))))
+ '(term-color-white ((t (:foreground "#DCDCCC" :background "#656555"))))
+ '(term-default-fg-color ((t (:inherit term-color-white))))
+ '(term-default-bg-color ((t (:inherit term-color-black))))
+ )
+
+(add-hook 'term-mode-hook
+	  '(lambda ()
+             (key-chord-define term-raw-map "jk"
+                               '(lambda ()
+				  (interactive)
+				  (message "line mode")
+				  (term-line-mode)
+				  (hl-line-mode 1)))
+             (key-chord-define term-mode-map "jk"
+                               '(lambda ()
+				  (interactive)
+				  (message "char mode")
+				  (term-char-mode)
+				  (hl-line-mode 0)))
+             (define-key term-raw-map (kbd "C-h") 'term-send-backspace)
+             (define-key term-raw-map (kbd "C-y") 'term-paste)
+             (define-key term-raw-map (kbd "C-c ESC")
+               '(lambda ()
+		  (interactive)
+		  (term-send-raw-string "\e")))
+             (define-key term-raw-map (kbd "C-c C-z")
+               '(lambda ()
+		  (interactive)
+		  (term-send-raw-string "\C-z")))
+	     ))
