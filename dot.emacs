@@ -67,13 +67,13 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (load-theme 'wombat t)
 
-(when (not window-system)
-  (defun on-frame-open (&optional frame)
-    "If the FRAME created in terminal don't load background color."
-    (unless (display-graphic-p frame)
-      (set-face-background 'default "unspecified-bg" frame)))
-  (add-hook 'after-make-frame-functions 'on-frame-open)
-  )
+;; (when (not window-system)
+;;   (defun on-frame-open (&optional frame)
+;;     "If the FRAME created in terminal don't load background color."
+;;     (unless (display-graphic-p frame)
+;;       (set-face-background 'default "unspecified-bg" frame)))
+;;   (add-hook 'after-make-frame-functions 'on-frame-open)
+;;   )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Emacs server
@@ -177,6 +177,12 @@
 (define-key helm-map (kbd "C-h") 'delete-backward-char)
 (define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action)
 (global-set-key (kbd "M-x") 'helm-M-x)
+
+(unless window-system
+  (set-face-background 'helm-visible-mark "ForestGreen")
+  (set-face-background 'helm-selection "ForestGreen")
+  (set-face-foreground 'helm-match "orange")
+  )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; settings for auto-complete
@@ -349,18 +355,31 @@
                    (interactive)
                    (multi-term)))
 
+;; Tango
 (custom-set-faces
- '(term-color-black ((t (:foreground "#3F3F3F" :background "#2B2B2B"))))
- '(term-color-red ((t (:foreground "#AC7373" :background "#8C5353"))))
- '(term-color-green ((t (:foreground "#7F9F7F" :background "#9FC59F"))))
- '(term-color-yellow ((t (:foreground "#DFAF8F" :background "#9FC59F"))))
- '(term-color-blue ((t (:foreground "#7CB8BB" :background "#4C7073"))))
- '(term-color-magenta ((t (:foreground "#DC8CC3" :background "#CC9393"))))
- '(term-color-cyan ((t (:foreground "#93E0E3" :background "#8CD0D3"))))
- '(term-color-white ((t (:foreground "#DCDCCC" :background "#656555"))))
- '(term-default-fg-color ((t (:inherit term-color-white))))
+ '(term-color-black ((t (:foreground "#555753" :background "#000000"))))
+ '(term-color-blue ((t (:foreground "#729fcf" :background "#3465a4"))))
+ '(term-color-cyan ((t (:foreground "#34e2e2" :background "#06989a"))))
+ '(term-color-green ((t (:foreground "#8ae234" :background "#4e9a06"))))
+ '(term-color-magenta ((t (:foreground "#ad7fa8" :background "#75507b"))))
+ '(term-color-red ((t (:foreground "#ef2929" :background "#cc0000"))))
+ '(term-color-white ((t (:foreground "#eeeeec" :background "#d3d7cf"))))
+ '(term-color-yellow ((t (:foreground "#fce94f" :background "#c4a000"))))
  '(term-default-bg-color ((t (:inherit term-color-black))))
- )
+ '(term-default-fg-color ((t (:inherit term-color-white)))))
+
+;; (custom-set-faces
+;;  '(term-color-black ((t (:foreground "#3F3F3F" :background "#2B2B2B"))))
+;;  '(term-color-red ((t (:foreground "#AC7373" :background "#8C5353"))))
+;;  '(term-color-green ((t (:foreground "#7F9F7F" :background "#9FC59F"))))
+;;  '(term-color-yellow ((t (:foreground "#DFAF8F" :background "#9FC59F"))))
+;;  '(term-color-blue ((t (:foreground "#7CB8BB" :background "#4C7073"))))
+;;  '(term-color-magenta ((t (:foreground "#DC8CC3" :background "#CC9393"))))
+;;  '(term-color-cyan ((t (:foreground "#93E0E3" :background "#8CD0D3"))))
+;;  '(term-color-white ((t (:foreground "#DCDCCC" :background "#656555"))))
+;;  '(term-default-fg-color ((t (:inherit term-color-white))))
+;;  '(term-default-bg-color ((t (:inherit term-color-black))))
+;;  )
 
 (add-hook 'term-mode-hook
 	  '(lambda ()
@@ -378,6 +397,8 @@
 				  (hl-line-mode 0)))
              (define-key term-raw-map (kbd "C-h") 'term-send-backspace)
              (define-key term-raw-map (kbd "C-y") 'term-paste)
+	     (define-key term-raw-map (kbd "C-n") 'term-send-down)
+	     (define-key term-raw-map (kbd "C-p") 'term-send-up)
              (define-key term-raw-map (kbd "C-c ESC")
                '(lambda ()
 		  (interactive)
