@@ -112,17 +112,22 @@ alias la='ls -a'
 alias grep='grep --color=auto'
 alias egrep='egrep --color=auto'
 alias fgrep='fgrep --color=auto'
-# alias e='emacsclient -n'
-alias e='emacsclient -t -a ""'
-alias ec='emacsclient -n'
-alias mew='emacsclient -e "(mew)" -t -a ""'
-alias start-emacs='emacs --daemon'
-alias kill-emacs='emacsclient -e "(kill-emacs)"'
 alias p='pwd | sed "s,^$HOME,~,"'
 alias pd=peco-dirs-cd
 alias fd=peco-find-cd
 alias pk=peco-pkill
 alias ph=peco-history
+
+# alias e='emacsclient -n'
+if [ "$TERM" = eterm-color ]; then
+    alias e='emacsclient -n'
+else
+    alias e='emacsclient -t -a ""'
+    alias ec='emacsclient -n'
+    alias mew='emacsclient -e "(mew)" -t -a ""'
+    alias start-emacs='emacs --daemon'
+    alias kill-emacs='emacsclient -e "(kill-emacs)"'
+fi
 
 # enable bash completion in interactive shells
 if ! shopt -oq posix; then
