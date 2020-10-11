@@ -15,12 +15,12 @@ URxvt.saveLines:	3000
 !URxvt.fading:		40
 
 !! Font list and Spacing
-URxvt.font:		xft:Ricty diminished-16
+URxvt.font:		xft:Ricty diminished-13
 URxvt.letterSpace:	-1
 !URxvt.lineSpace:	0
 
 !! Set icon
-URxvt.iconFile: /usr/share/icons/breeze-dark/apps/48/utilities-terminal.svg
+URxvt.iconFile: /usr/share/icons/breeze/apps/48/utilities-terminal.svg
 
 !! Colors
 !! https://github.com/mbadolato/iTerm2-Color-Schemes
@@ -35,7 +35,8 @@ URxvt.background:  #232627
 URxvt.cursorColor: #eff0f1
 !
 ! Black
-URxvt.color0:      #31363b
+!URxvt.color0:      #31363b
+URxvt.color0:      #232627
 URxvt.color8:      #7f8c8d
 !
 ! Red
@@ -68,5 +69,5 @@ URxvt.color15:     #fcfcfc
 !
 ! Bold, Italic, Underline
 URxvt.colorBD:     #fcfcfc
-!*.colorIT:
-!*.colorUL:
+!URxvt.colorIT:
+!URxvt.colorUL:
