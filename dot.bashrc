@@ -33,7 +33,7 @@ prompt_command()
     local reset='\e[0m'
 
     [ "$ex" -ne 0 ] && color=$'\e[1;31m' # red
-    PS1="\[$color\]\u@\h\w \$ \[$reset\]"
+    PS1="\[$color\]\u@\h:\w \$ \[$reset\]"
 
     # After each command, append to the history file and reread it
     history -a
