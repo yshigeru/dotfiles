@@ -27,7 +27,9 @@
 (setq calendar-week-start-day 1)
 (setq vc-follow-symlinks t)
 (setq auto-revert-check-vc-info t)
-;(xclip-mode)
+
+(global-linum-mode)
+(setq linum-format "%5d ")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; key bindings
@@ -38,6 +40,7 @@
 (global-set-key "\C-x\C-o" 'find-file-other-window)
 (global-set-key "\C-t" 'pop-tag-mark)
 (global-set-key "\C-x\C-b" 'buffer-menu)
+(global-set-key "\C-x\C-j" 'view-mode)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; visual settings for X11
@@ -45,7 +48,7 @@
 (when window-system
   (set-face-attribute 'default nil
 		      :family "Ricty diminished"
-		      :height (if (equal (system-name) "xps13") 160 105))
+		      :height (if (equal (system-name) "xps13") 130 105))
   (set-fontset-font (frame-parameter nil 'font)
 		    'japanese-jisx0208
 		    (cons "Ricty diminished" "iso10646-1"))
@@ -407,4 +410,32 @@
                '(lambda ()
 		  (interactive)
 		  (term-send-raw-string "\C-z")))
+	     ))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; xclip
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(when (not window-system)
+  (require 'xclip)
+  (xclip-mode)
+  )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; go mode
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(require 'go-mode)
+(require 'go-autocomplete)
+
+(add-to-list 'exec-path (expand-file-name "~/go/bin"))
+
+(add-hook 'go-mode-hook 'flycheck-mode)
+;(add-hook 'go-mode-hook 'go-eldoc-setup)
+(add-hook 'go-mode-hook
+          '(lambda ()
+	     (add-hook 'before-save-hook 'gofmt-before-save)
+	     (local-set-key (kbd "M-.") 'godef-jump)
+	     ;; Use 4 character tab
+	     (setq indent-tabs-mode nil)
+	     (setq c-basic-offset 4)
+             (setq tab-width 4)
 	     ))
