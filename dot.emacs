@@ -31,6 +31,12 @@
 (global-linum-mode)
 (setq linum-format "%5d ")
 
+(add-hook 'find-file-hook
+	  (lambda ()
+	    (when (and buffer-file-name
+		       (not (string-match-p "/.emacs.d/elpa/" buffer-file-name)))
+	      (view-mode t))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; key bindings
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -40,7 +46,7 @@
 (global-set-key "\C-x\C-o" 'find-file-other-window)
 (global-set-key "\C-t" 'pop-tag-mark)
 (global-set-key "\C-x\C-b" 'buffer-menu)
-(global-set-key "\C-x\C-j" 'view-mode)
+(global-set-key "\C-c\C-j" 'view-mode)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; visual settings for X11
@@ -282,26 +288,6 @@
   '(add-to-list 'ispell-skip-region-alist '("[^\000-\377]+")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; key-chord
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(require 'key-chord)
-(setq key-chord-two-keys-delay 0.04)
-(key-chord-mode 1)
-(key-chord-define-global "jk" 'view-mode)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; viewer
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(require 'viewer)
-(viewer-stay-in-setup)
-(viewer-change-modeline-color-setup)
-(setq view-mode-by-default-regexp ".*")
-(viewer-aggressive-setup 'force)      ;全てのファイルをview-modeで開く
-(setq viewer-modeline-color-default "gray30")
-(setq viewer-modeline-color-unwritable "red") ;書き込み禁止ファイルの色
-(setq viewer-modeline-color-view "DarkSlateBlue") ;view-modeのファイルの色
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; gtags
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (require 'gtags)
@@ -386,13 +372,13 @@
 
 (add-hook 'term-mode-hook
 	  '(lambda ()
-             (key-chord-define term-raw-map "jk"
+	     (define-key term-raw-map (kbd "C-c C-j")
                                '(lambda ()
 				  (interactive)
 				  (message "line mode")
 				  (term-line-mode)
 				  (hl-line-mode 1)))
-             (key-chord-define term-mode-map "jk"
+	     (define-key term-mode-map (kbd "C-c C-j")
                                '(lambda ()
 				  (interactive)
 				  (message "char mode")
