@@ -28,9 +28,6 @@
 (setq vc-follow-symlinks t)
 (setq auto-revert-check-vc-info t)
 
-(global-linum-mode)
-(setq linum-format "%5d ")
-
 (add-hook 'find-file-hook
 	  (lambda ()
 	    (when (and buffer-file-name
@@ -46,6 +43,7 @@
 (global-set-key "\C-x\C-o" 'find-file-other-window)
 (global-set-key "\C-t" 'pop-tag-mark)
 (global-set-key "\C-x\C-b" 'buffer-menu)
+(global-set-key "\C-x\C-j" 'view-mode)
 (global-set-key "\C-c\C-j" 'view-mode)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -92,11 +90,6 @@
   (server-start))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; magit
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(require 'magit)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; settings for cmigemo
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (when (and (executable-find "cmigemo")
@@ -120,7 +113,7 @@
   (setq bookmark-sort-flag nil)
   (defun bookmark-arrange-latest-top ()
     (let ((latest ( bookmark-get-bookmark bookmark)))
-      (setq bookmark-alist (cons latest (delq latest bookmark-aliset))))
+      (setq bookmark-alist (cons latest (delq latest bookmark-alist))))
     (bookmark-save))
   (add-hook 'bookmark-after-jump-hook 'bookmark-arrange-latest-top))
 
@@ -252,7 +245,8 @@
 (when window-system
   (require 'elscreen)
   (elscreen-start)
-  (setq elscreen-display-tab t)
+  ;; (setq elscreen-display-tab t)
+  (setq elscreen-display-tab nil)
   (setq elscreen-tab-display-kill-screen nil) ;タブの先頭に[X]を表示しない
   (setq elscreen-tab-display-control nil) ;header-lineの先頭に[<->]を表示しない
   (global-set-key "\C-zl" 'elscreen-toggle)
@@ -344,31 +338,18 @@
                    (interactive)
                    (multi-term)))
 
-;; Tango
+;; VSCode color
 (custom-set-faces
- '(term-color-black ((t (:foreground "#555753" :background "#000000"))))
- '(term-color-blue ((t (:foreground "#729fcf" :background "#3465a4"))))
- '(term-color-cyan ((t (:foreground "#34e2e2" :background "#06989a"))))
- '(term-color-green ((t (:foreground "#8ae234" :background "#4e9a06"))))
- '(term-color-magenta ((t (:foreground "#ad7fa8" :background "#75507b"))))
- '(term-color-red ((t (:foreground "#ef2929" :background "#cc0000"))))
- '(term-color-white ((t (:foreground "#eeeeec" :background "#d3d7cf"))))
- '(term-color-yellow ((t (:foreground "#fce94f" :background "#c4a000"))))
+ '(term-color-black ((t (:foreground "#6A787A" :background "#598489"))))
+ '(term-color-blue ((t (:foreground "#44AAE6" :background "#009AFB"))))
+ '(term-color-cyan ((t (:foreground "#3DD5E7" :background "#5FFFFF"))))
+ '(term-color-green ((t (:foreground "#39E9A8" :background "#00FF9A"))))
+ '(term-color-magenta ((t (:foreground "#E17599" :background "#FF578F"))))
+ '(term-color-red ((t (:foreground "#E9653B" :background "#E65029"))))
+ '(term-color-white ((t (:foreground "#C3DDE1" :background "#D9FBFF"))))
+ '(term-color-yellow ((t (:foreground "#E5B684" :background "#E89440"))))
  '(term-default-bg-color ((t (:inherit term-color-black))))
  '(term-default-fg-color ((t (:inherit term-color-white)))))
-
-;; (custom-set-faces
-;;  '(term-color-black ((t (:foreground "#3F3F3F" :background "#2B2B2B"))))
-;;  '(term-color-red ((t (:foreground "#AC7373" :background "#8C5353"))))
-;;  '(term-color-green ((t (:foreground "#7F9F7F" :background "#9FC59F"))))
-;;  '(term-color-yellow ((t (:foreground "#DFAF8F" :background "#9FC59F"))))
-;;  '(term-color-blue ((t (:foreground "#7CB8BB" :background "#4C7073"))))
-;;  '(term-color-magenta ((t (:foreground "#DC8CC3" :background "#CC9393"))))
-;;  '(term-color-cyan ((t (:foreground "#93E0E3" :background "#8CD0D3"))))
-;;  '(term-color-white ((t (:foreground "#DCDCCC" :background "#656555"))))
-;;  '(term-default-fg-color ((t (:inherit term-color-white))))
-;;  '(term-default-bg-color ((t (:inherit term-color-black))))
-;;  )
 
 (add-hook 'term-mode-hook
 	  '(lambda ()
